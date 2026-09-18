@@ -1,0 +1,43 @@
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+*.iml
+*.class
+.idea/
+
+# Android
+android/.gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/GeneratedPluginRegistrant.java
+android/key.properties
+*.jks
+*.keystore
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Environment
+.env
+
+# Claude Code local session state
+.claude/
