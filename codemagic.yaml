@@ -114,6 +114,12 @@ workflows:
       - name: Fetch signing files
         script: |
           echo "$CERTIFICATE_PRIVATE_KEY_B64" | base64 --decode > "$CM_BUILD_DIR/cert_key.pem"
+          echo "--- decoded key (first/last line + line count, to check it round-tripped) ---"
+          head -n 1 "$CM_BUILD_DIR/cert_key.pem"
+          tail -n 1 "$CM_BUILD_DIR/cert_key.pem"
+          wc -l "$CM_BUILD_DIR/cert_key.pem"
+          echo "--- openssl validation of the decoded key ---"
+          openssl rsa -in "$CM_BUILD_DIR/cert_key.pem" -check -noout
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --certificate-key "$(cat "$CM_BUILD_DIR/cert_key.pem")" \
