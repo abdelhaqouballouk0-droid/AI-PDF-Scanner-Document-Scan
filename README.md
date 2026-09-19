@@ -128,7 +128,37 @@ lib/
 - `cunning_document_scanner` nécessite Google Play Services sur l'émulateur Android
   (utilise un émulateur avec Play Store, pas une image "Google APIs" seule).
 
-## 8. Prochaines étapes suggérées
+## 8. Build CI/CD avec Codemagic
+
+`codemagic.yaml` (racine du projet) définit deux workflows, prêts à l'emploi dès que le
+dépôt est connecté sur [codemagic.io](https://codemagic.io) :
+
+- **android-workflow** : `flutter analyze` + `flutter test`, puis build d'un APK et d'un
+  App Bundle (`.aab`). Fonctionne tel quel (signature debug) pour de la distribution
+  interne/QA. Pour un vrai build signé Play Store, crée dans Codemagic un groupe de
+  variables d'environnement nommé `android_keystore` contenant :
+  - `CM_KEYSTORE` — ton fichier `.jks` encodé en base64 (`base64 -w0 release-keystore.jks`)
+  - `CM_KEYSTORE_PASSWORD`, `CM_KEY_ALIAS`, `CM_KEY_PASSWORD`
+
+  Le script les convertit automatiquement en `android/key.properties` (voir
+  `android/key.properties.example` pour le format, et `android/app/build.gradle.kts` pour
+  la logique de signature — bascule sur les clés debug si `key.properties` est absent).
+  Pour publier directement sur le Play Store, décommente le bloc `google_play:` dans
+  `codemagic.yaml` et connecte un compte de service Google Play dans Codemagic
+  (Teams → Integrations → Google Play).
+
+- **ios-workflow** : nécessite une intégration **App Store Connect** côté Codemagic
+  (Teams → Integrations → App Store Connect, avec une clé API ayant accès à une app
+  enregistrée sous le bundle ID `com.example.aiPdfScanner`). Renomme l'app et le bundle ID
+  avant de publier réellement (`ios/Runner.xcodeproj`, voir aussi `PRODUCT_BUNDLE_IDENTIFIER`).
+  Sans cette intégration configurée, le build iOS échouera à l'étape de signature — c'est
+  attendu tant que tu n'as pas de compte Apple Developer branché.
+
+Ces deux étapes (compte de service Google Play, clé API App Store Connect) nécessitent tes
+propres identifiants développeur et se configurent uniquement depuis le dashboard
+Codemagic — impossible à automatiser depuis ce dépôt.
+
+## 9. Prochaines étapes suggérées
 
 - Brancher un vrai fournisseur IA (clé OpenAI/Groq) et un serveur Gotenberg pour activer
   Word/Excel ↔ PDF sans limitation.

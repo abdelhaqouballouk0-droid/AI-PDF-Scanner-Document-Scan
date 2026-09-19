@@ -1,0 +1,119 @@
+workflows:
+  android-workflow:
+    name: Android (APK + AAB)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      java: 17
+      # Create this group in Codemagic (Teams > your team > Environment
+      # variable groups) only if you want a real Play Store-signed release.
+      # Variables expected inside it: CM_KEYSTORE (base64-encoded .jks),
+      # CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS, CM_KEY_PASSWORD.
+      # Without this group, the release build falls back to debug signing
+      # (fine for internal testing, not for the Play Store).
+      groups:
+        - android_keystore
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    scripts:
+      - name: Get Flutter packages
+        script: flutter packages pub get
+
+      - name: Flutter analyze
+        script: flutter analyze
+
+      - name: Flutter unit tests
+        script: flutter test
+
+      - name: Set up release signing (optional)
+        script: |
+          if [ -n "${CM_KEYSTORE:-}" ]; then
+            echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/app/release-keystore.jks"
+            cat > "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=release-keystore.jks
+          EOF
+            echo "Release keystore configured — building a Play Store-signed AAB/APK."
+          else
+            echo "CM_KEYSTORE not set — release build will use debug signing (fine for QA, not for the Play Store)."
+          fi
+
+      - name: Build APK (for direct install / QA distribution)
+        script: flutter build apk --release
+
+      - name: Build App Bundle (for Play Store upload)
+        script: flutter build appbundle --release
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/**/*.aab
+      - build/app/outputs/**/mapping.txt
+
+    publishing:
+      email:
+        recipients:
+          - ayoubboutglay318@gmail.com
+        notify:
+          success: true
+          failure: true
+      # Uncomment once you've connected a Google Play service account in
+      # Codemagic (Teams > Integrations > Google Play):
+      # google_play:
+      #   credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+      #   track: internal
+      #   submit_as_draft: true
+
+  ios-workflow:
+    name: iOS (IPA)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "com.example.aiPdfScanner"
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      # Requires an App Store Connect integration created in Codemagic
+      # (Teams > Integrations > App Store Connect) with an API key that has
+      # access to an app registered under BUNDLE_ID. Name the integration
+      # exactly "codemagic_api_key" below, or change the name to match.
+    integrations:
+      app_store_connect: codemagic_api_key
+    scripts:
+      - name: Get Flutter packages
+        script: flutter packages pub get
+
+      - name: Flutter analyze
+        script: flutter analyze
+
+      - name: Set up code signing (App Store Connect)
+        script: xcode-project use-profiles
+
+      - name: Install CocoaPods dependencies (if any plugin still needs them)
+        script: find . -name "Podfile" -execdir pod install \; || true
+
+      - name: Flutter build ipa
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - ayoubboutglay318@gmail.com
+        notify:
+          success: true
+          failure: true
+      # Uncomment once App Store Connect publishing should happen automatically:
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
