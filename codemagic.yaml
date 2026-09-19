@@ -74,13 +74,22 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      # Automatic code signing: Codemagic uses the app_store_connect
+      # integration below to fetch an existing certificate/profile for
+      # this bundle ID, or create fresh ones (with a private key it
+      # generates and keeps itself) if none exist yet — before any
+      # script below runs. No manual keychain/fetch-signing-files
+      # scripting needed.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ouballouk.aipdfscanner
       vars:
-        BUNDLE_ID: "com.ouballouk.aipdfscanner"
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
       # Requires an Apple Developer Portal / App Store Connect API key
       # connected in Codemagic (Teams > Integrations > Developer Portal),
-      # with access to an app registered under BUNDLE_ID. The name below
+      # with access to the com.ouballouk.aipdfscanner bundle ID above
+      # (ios_signing.bundle_identifier). The integration name below
       # ("Codemagic") must match the key's name exactly as shown in that
       # integration's "Manage keys" dialog.
     integrations:
@@ -91,16 +100,6 @@ workflows:
 
       - name: Flutter analyze
         script: flutter analyze
-
-      - name: Initialize keychain
-        script: keychain initialize
-
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --certificate-type DISTRIBUTION \
-            --create
 
       - name: Set up code signing (App Store Connect)
         script: xcode-project use-profiles
