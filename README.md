@@ -147,11 +147,20 @@ dépôt est connecté sur [codemagic.io](https://codemagic.io) :
   `codemagic.yaml` et connecte un compte de service Google Play dans Codemagic
   (Teams → Integrations → Google Play).
 
-- **ios-workflow** : nécessite une clé API connectée côté Codemagic (Teams → Integrations
-  → Developer Portal), avec accès à une app enregistrée sous le bundle ID
-  `com.ouballouk.aipdfscanner`. Le nom de la clé dans Codemagic doit correspondre à la
-  valeur `app_store_connect` de `codemagic.yaml` (actuellement `Codemagic`). Sans cette
-  intégration, le build iOS échoue à l'étape de signature.
+- **ios-workflow** : signature via des identifiants uploadés une fois pour toutes dans
+  Codemagic (Personal account settings → Code signing identities), plutôt que la création
+  automatique via l'API App Store Connect (`fetch-signing-files --create`), qui s'est
+  révélée peu fiable dans cet environnement (échecs répétés sur `--certificate-key`).
+  - **iOS certificates** : certificat "Apple Distribution" généré manuellement via une CSR
+    (Certificates, Identifiers & Profiles → Certificates) contre l'App ID
+    `com.ouballouk.aipdfscanner`, uploadé sous la référence `ios_distribution_v5`.
+  - **iOS provisioning profiles** : profil "App Store" généré pour ce même App ID et ce
+    certificat, uploadé sous la référence `ios_distribution_profile`.
+
+  `codemagic.yaml` référence ces deux noms via `environment.ios_signing`. Si tu dois les
+  régénérer (certificat expiré, nouveau device, etc.), reproduis le même circuit CSR →
+  certificat → profil → upload, et garde les mêmes noms de référence (ou mets à jour
+  `codemagic.yaml` en conséquence).
 
 Ces deux étapes (compte de service Google Play, clé API App Store Connect) nécessitent tes
 propres identifiants développeur et se configurent uniquement depuis le dashboard

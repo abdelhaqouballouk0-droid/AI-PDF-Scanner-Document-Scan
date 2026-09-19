@@ -74,33 +74,19 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      # Group holding CERTIFICATE_PRIVATE_KEY_B64 — a 2048-bit RSA key
-      # (secret), base64-encoded to a single line so Codemagic's
-      # multiline-secret handling can't mangle it. Add it in the app's
-      # Environment variables tab, group "ios_signing". The "Fetch
-      # signing files" script decodes it back to PEM and hands it to
-      # fetch-signing-files --create as a file, which uses it to build
-      # the new distribution certificate's CSR; without it, there's no
-      # key to attach to the certificate it creates ("Cannot save
-      # Signing Certificates without certificate private key").
-      # Generate one with: openssl genrsa 2048 | base64 -w0
-      groups:
-        - ios_signing
-      vars:
-        BUNDLE_ID: "com.ouballouk.aipdfscanner"
-        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
-        XCODE_SCHEME: "Runner"
-      # Requires an Apple Developer Portal / App Store Connect API key
-      # connected in Codemagic (Teams > Integrations > Developer Portal),
-      # with access to the com.ouballouk.aipdfscanner bundle ID (must
-      # already be registered as an App ID in the Developer Portal AND
-      # as an app in App Store Connect — fetch-signing-files --create
-      # only creates the certificate/profile, not the App ID/app
-      # itself). The integration name below ("Codemagic") must match
-      # the key's name exactly as shown in that integration's
-      # "Manage keys" dialog.
-    integrations:
-      app_store_connect: Codemagic
+      # References a certificate and provisioning profile uploaded once
+      # via Codemagic's UI (Personal account settings > Code signing
+      # identities > iOS certificates / iOS provisioning profiles),
+      # rather than having Codemagic create them on the fly — the
+      # automatic app-store-connect fetch-signing-files --create route
+      # kept failing in this environment. Both were manually generated
+      # via a CSR against the com.ouballouk.aipdfscanner App ID and
+      # uploaded under these exact reference names.
+      ios_signing:
+        certificates:
+          - ios_distribution_v5
+        provisioning_profiles:
+          - ios_distribution_profile
     scripts:
       - name: Get Flutter packages
         script: flutter packages pub get
@@ -108,24 +94,7 @@ workflows:
       - name: Flutter analyze
         script: flutter analyze
 
-      - name: Initialize keychain
-        script: keychain initialize
-
-      - name: Fetch signing files
-        script: |
-          echo "$CERTIFICATE_PRIVATE_KEY_B64" | base64 --decode > "$CM_BUILD_DIR/cert_key.pem"
-          echo "--- decoded key (first/last line + line count, to check it round-tripped) ---"
-          head -n 1 "$CM_BUILD_DIR/cert_key.pem"
-          tail -n 1 "$CM_BUILD_DIR/cert_key.pem"
-          wc -l "$CM_BUILD_DIR/cert_key.pem"
-          echo "--- openssl validation of the decoded key ---"
-          openssl rsa -in "$CM_BUILD_DIR/cert_key.pem" -check -noout
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --certificate-key "$(cat "$CM_BUILD_DIR/cert_key.pem")" \
-            --create
-
-      - name: Set up code signing (App Store Connect)
+      - name: Set up code signing settings on Xcode project
         script: xcode-project use-profiles
 
       - name: Install CocoaPods dependencies (if any plugin still needs them)
