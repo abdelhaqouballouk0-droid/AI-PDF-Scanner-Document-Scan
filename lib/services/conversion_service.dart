@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../l10n/app_localizations.dart';
 import 'file_repository_service.dart';
 import 'pdf_tools_service.dart';
 import 'storage_service.dart';
@@ -27,20 +28,20 @@ extension ConversionKindX on ConversionKind {
   bool get isOnDevice =>
       this == ConversionKind.imageToPdf || this == ConversionKind.pdfToImage;
 
-  String get title {
+  String titleFor(AppLocalizations t) {
     switch (this) {
       case ConversionKind.imageToPdf:
-        return 'Image en PDF';
+        return t('toolsImageToPdf');
       case ConversionKind.pdfToImage:
-        return 'PDF en JPG';
+        return t('toolsPdfToJpg');
       case ConversionKind.wordToPdf:
-        return 'Word en PDF';
+        return t('toolsWordToPdf');
       case ConversionKind.excelToPdf:
-        return 'Excel en PDF';
+        return t('toolsExcelToPdf');
       case ConversionKind.pdfToWord:
-        return 'PDF en Word';
+        return t('toolsPdfToWord');
       case ConversionKind.pdfToExcel:
-        return 'PDF en Excel';
+        return t('toolsPdfToExcel');
     }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../services/document_scanner_service.dart';
@@ -23,7 +24,7 @@ class ScanReviewScreen extends ConsumerStatefulWidget {
 
 class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
   late List<String> _pages;
-  final _nameController = TextEditingController(text: 'Document scanné');
+  late final TextEditingController _nameController;
   PdfPageFormat _pageFormat = PdfPageFormat.a4;
   bool _saving = false;
 
@@ -31,6 +32,7 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
   void initState() {
     super.initState();
     _pages = List.of(widget.imagePaths);
+    _nameController = TextEditingController();
   }
 
   @override
@@ -41,13 +43,13 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
 
   Future<void> _save() async {
     if (_pages.isEmpty) return;
+    final t = AppLocalizations.of(context)!;
     setState(() => _saving = true);
     try {
+      final defaultName = t('scanDefaultName');
       final file = await DocumentScannerService.instance.buildPdfFromImages(
         _pages,
-        outputBaseName: _nameController.text.trim().isEmpty
-            ? 'Document scanné'
-            : _nameController.text.trim(),
+        outputBaseName: _nameController.text.trim().isEmpty ? defaultName : _nameController.text.trim(),
         pageSize: _pageFormat,
       );
       await ref.read(filesProvider.notifier).refresh();
@@ -58,7 +60,7 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -66,9 +68,10 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_pages.length} page(s) scannée(s)'),
+        title: Text(t.tp('scanReviewTitle', {'count': '${_pages.length}'})),
       ),
       body: Column(
         children: [
@@ -76,9 +79,10 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nom du document',
-                prefixIcon: Icon(Icons.edit_outlined),
+              decoration: InputDecoration(
+                labelText: t('scanDocumentNameLabel'),
+                hintText: t('scanDefaultName'),
+                prefixIcon: const Icon(Icons.edit_outlined),
               ),
             ),
           ),
@@ -86,7 +90,7 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                const Text('Format : ', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text('${t('scanFormatLabel')} ', style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(width: 6),
                 ChoiceChip(
                   label: const Text('A4'),
@@ -104,10 +108,10 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
           ),
           Expanded(
             child: _pages.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.image_not_supported_outlined,
-                    title: 'Aucune page',
-                    message: 'Toutes les pages ont été supprimées.',
+                    title: t('scanNoPagesTitle'),
+                    message: t('scanNoPagesMessage'),
                   )
                 : ReorderableGridView(
                     pages: _pages,
@@ -125,7 +129,7 @@ class _ScanReviewScreenState extends ConsumerState<ScanReviewScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: LoadingButton(
-                label: 'Enregistrer en PDF',
+                label: t('scanSaveAsPdf'),
                 icon: Icons.picture_as_pdf_rounded,
                 loading: _saving,
                 onPressed: _pages.isEmpty ? null : _save,
@@ -152,6 +156,7 @@ class ReorderableGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return ReorderableListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: pages.length,
@@ -166,7 +171,7 @@ class ReorderableGridView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: Image.file(File(path), width: 48, height: 62, fit: BoxFit.cover),
             ),
-            title: Text('Page ${index + 1}'),
+            title: Text(t.tp('organizePage', {'number': '${index + 1}'})),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../theme/app_theme.dart';
@@ -87,14 +88,16 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
           break;
       }
     } catch (e) {
+      final t = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Annotation impossible : $e')),
+        SnackBar(content: Text(t.tp('viewerAnnotationFailed', {'error': '$e'}))),
       );
     }
     _controller.clearSelection();
   }
 
   Future<void> _saveAnnotations() async {
+    final t = AppLocalizations.of(context)!;
     setState(() => _savingAnnotations = true);
     try {
       final bytes = await _controller.saveDocument();
@@ -102,11 +105,11 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
       await ref.read(filesProvider.notifier).refresh();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Modifications enregistrées')),
+        SnackBar(content: Text(t('viewerAnnotationsSaved'))),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _savingAnnotations = false);
     }
@@ -114,6 +117,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -156,7 +160,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
                         child: TextField(
                           controller: _searchController,
                           autofocus: true,
-                          decoration: const InputDecoration(hintText: 'Rechercher dans le document'),
+                          decoration: InputDecoration(hintText: t('viewerSearchHint')),
                           onSubmitted: _runSearch,
                         ),
                       ),
@@ -181,9 +185,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
                       color: AppColors.primaryLight,
                       alignment: Alignment.center,
                       child: Text(
-                        _hasSelection
-                            ? 'Relâche pour appliquer l\'annotation'
-                            : 'Sélectionne du texte pour l\'annoter',
+                        _hasSelection ? t('viewerHighlightReleaseHint') : t('viewerHighlightSelectHint'),
                         style: const TextStyle(fontSize: 12.5, color: AppColors.primaryDark),
                       ),
                     ),
@@ -208,27 +210,27 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
             children: [
               _BarAction(
                 icon: Icons.edit_note_rounded,
-                label: 'Éditer',
+                label: t('viewerEdit'),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => OrganizePagesScreen(document: widget.document)),
                 ),
               ),
               _BarAction(
                 icon: Icons.border_color_outlined,
-                label: 'Annoter',
+                label: t('viewerAnnotate'),
                 active: _armedTool != _AnnotationTool.none,
                 onTap: () => _showAnnotateMenu(context),
               ),
               _BarAction(
                 icon: Icons.draw_outlined,
-                label: 'Signer',
+                label: t('viewerSign'),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => FillSignScreen(document: widget.document)),
                 ),
               ),
               _BarAction(
                 icon: Icons.swap_horiz_rounded,
-                label: 'Convertir',
+                label: t('viewerConvert'),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => ConvertScreen(
@@ -240,7 +242,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
               ),
               _BarAction(
                 icon: Icons.apps_rounded,
-                label: 'Tout',
+                label: t('viewerAll'),
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => MoreToolsScreen(document: widget.document)),
                 ),
@@ -253,6 +255,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
   }
 
   void _showAnnotateMenu(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (ctx) => SafeArea(
@@ -261,7 +264,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.border_color_outlined, color: Color(0xFFFBC02D)),
-              title: const Text('Surligner'),
+              title: Text(t('viewerHighlight')),
               trailing: _armedTool == _AnnotationTool.highlight ? const Icon(Icons.check) : null,
               onTap: () {
                 Navigator.pop(ctx);
@@ -270,7 +273,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.format_underline_rounded, color: AppColors.info),
-              title: const Text('Souligner'),
+              title: Text(t('viewerUnderline')),
               trailing: _armedTool == _AnnotationTool.underline ? const Icon(Icons.check) : null,
               onTap: () {
                 Navigator.pop(ctx);
@@ -279,7 +282,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.strikethrough_s_rounded, color: AppColors.primary),
-              title: const Text('Barrer'),
+              title: Text(t('viewerStrikethrough')),
               trailing: _armedTool == _AnnotationTool.strikethrough ? const Icon(Icons.check) : null,
               onTap: () {
                 Navigator.pop(ctx);
@@ -289,7 +292,7 @@ class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
             if (_armedTool != _AnnotationTool.none)
               ListTile(
                 leading: const Icon(Icons.close_rounded),
-                title: const Text('Désactiver l\'annotation'),
+                title: Text(t('viewerDisableAnnotation')),
                 onTap: () {
                   Navigator.pop(ctx);
                   setState(() => _armedTool = _AnnotationTool.none);

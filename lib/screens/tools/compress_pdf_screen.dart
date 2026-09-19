@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../services/pdf_tools_service.dart';
@@ -21,6 +22,7 @@ class _CompressPdfScreenState extends ConsumerState<CompressPdfScreen> {
   bool _working = false;
 
   Future<void> _compress() async {
+    final t = AppLocalizations.of(context)!;
     setState(() => _working = true);
     try {
       final bytes = await widget.document.file.readAsBytes();
@@ -33,7 +35,7 @@ class _CompressPdfScreenState extends ConsumerState<CompressPdfScreen> {
       final originalKb = (bytes.length / 1024).toStringAsFixed(0);
       final newKb = (compressed.length / 1024).toStringAsFixed(0);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('$originalKb Ko → $newKb Ko')),
+        SnackBar(content: Text(t.tp('compressResult', {'originalKb': originalKb, 'newKb': newKb}))),
       );
 
       final doc = DocumentFile.fromFile(file, createdByApp: true);
@@ -42,7 +44,7 @@ class _CompressPdfScreenState extends ConsumerState<CompressPdfScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _working = false);
     }
@@ -52,8 +54,9 @@ class _CompressPdfScreenState extends ConsumerState<CompressPdfScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Compresser le PDF')),
+      appBar: AppBar(title: Text(t('compressTitle'))),
       body: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -63,29 +66,29 @@ class _CompressPdfScreenState extends ConsumerState<CompressPdfScreen> {
                 maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w700)),
             Text(widget.document.formattedSize, style: const TextStyle(color: AppColors.textSecondary)),
             const SizedBox(height: 24),
-            const Text('Niveau de compression', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text(t('compressLevelLabel'), style: const TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
             _LevelTile(
-              title: 'Faible',
-              subtitle: 'Qualité maximale, réduction modérée',
+              title: t('compressLow'),
+              subtitle: t('compressLowDesc'),
               selected: _level == CompressionLevel.low,
               onTap: () => setState(() => _level = CompressionLevel.low),
             ),
             _LevelTile(
-              title: 'Moyenne',
-              subtitle: 'Bon compromis qualité / taille (recommandé)',
+              title: t('compressMedium'),
+              subtitle: t('compressMediumDesc'),
               selected: _level == CompressionLevel.medium,
               onTap: () => setState(() => _level = CompressionLevel.medium),
             ),
             _LevelTile(
-              title: 'Forte',
-              subtitle: 'Fichier le plus léger, qualité réduite',
+              title: t('compressHigh'),
+              subtitle: t('compressHighDesc'),
               selected: _level == CompressionLevel.high,
               onTap: () => setState(() => _level = CompressionLevel.high),
             ),
             const Spacer(),
             LoadingButton(
-              label: 'Compresser',
+              label: t('compressButton'),
               icon: Icons.compress_rounded,
               loading: _working,
               onPressed: _compress,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../services/pdf_tools_service.dart';
@@ -34,11 +35,12 @@ class _ProtectUnlockScreenState extends ConsumerState<ProtectUnlockScreen> {
   }
 
   Future<void> _submit() async {
+    final t = AppLocalizations.of(context)!;
     final password = _passwordController.text;
     if (password.isEmpty) return;
     if (_isProtect && password != _confirmController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
+        SnackBar(content: Text(t('protectMismatch'))),
       );
       return;
     }
@@ -63,7 +65,7 @@ class _ProtectUnlockScreenState extends ConsumerState<ProtectUnlockScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_isProtect ? 'Erreur : $e' : 'Mot de passe incorrect ou fichier invalide')),
+        SnackBar(content: Text(_isProtect ? t.tp('commonErrorPrefix', {'error': '$e'}) : t('unlockWrongPassword'))),
       );
     } finally {
       if (mounted) setState(() => _working = false);
@@ -74,8 +76,9 @@ class _ProtectUnlockScreenState extends ConsumerState<ProtectUnlockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(_isProtect ? 'Protéger le PDF' : 'Déverrouiller le PDF')),
+      appBar: AppBar(title: Text(_isProtect ? t('protectTitle') : t('unlockTitle'))),
       body: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -87,7 +90,7 @@ class _ProtectUnlockScreenState extends ConsumerState<ProtectUnlockScreen> {
               controller: _passwordController,
               obscureText: _obscure,
               decoration: InputDecoration(
-                labelText: _isProtect ? 'Nouveau mot de passe' : 'Mot de passe actuel',
+                labelText: _isProtect ? t('protectNewPasswordLabel') : t('unlockCurrentPasswordLabel'),
                 suffixIcon: IconButton(
                   icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                   onPressed: () => setState(() => _obscure = !_obscure),
@@ -99,12 +102,12 @@ class _ProtectUnlockScreenState extends ConsumerState<ProtectUnlockScreen> {
               TextField(
                 controller: _confirmController,
                 obscureText: _obscure,
-                decoration: const InputDecoration(labelText: 'Confirmer le mot de passe'),
+                decoration: InputDecoration(labelText: t('protectConfirmPasswordLabel')),
               ),
             ],
             const SizedBox(height: 24),
             LoadingButton(
-              label: _isProtect ? 'Protéger' : 'Déverrouiller',
+              label: _isProtect ? t('protectButton') : t('unlockButton'),
               icon: _isProtect ? Icons.lock_outline_rounded : Icons.lock_open_rounded,
               loading: _working,
               onPressed: _submit,

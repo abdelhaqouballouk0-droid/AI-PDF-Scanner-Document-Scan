@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../providers/signature_provider.dart';
@@ -71,6 +72,7 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
   }
 
   Future<void> _pickSignature() async {
+    final t = AppLocalizations.of(context)!;
     final signatures = ref.read(signatureProvider).valueOrNull ?? [];
     final choice = await showModalBottomSheet<String>(
       context: context,
@@ -80,7 +82,7 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.draw_outlined, color: AppColors.primary),
-              title: const Text('Dessiner une nouvelle signature'),
+              title: Text(t('fillSignDrawNew')),
               onTap: () => Navigator.pop(ctx, '__new__'),
             ),
             const Divider(height: 1),
@@ -110,6 +112,7 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
 
   Future<void> _confirm() async {
     if (_pdfBytes == null || _signatureBytes == null) return;
+    final t = AppLocalizations.of(context)!;
     setState(() => _saving = true);
     try {
       final signed = await SignatureService.instance.stampSignature(
@@ -130,7 +133,7 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -140,9 +143,10 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Remplir et signer'),
+        title: Text(t('fillSignTitle')),
         actions: [
           if (_pageCount > 1)
             Padding(
@@ -153,7 +157,7 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
                   underline: const SizedBox.shrink(),
                   items: [
                     for (var i = 0; i < _pageCount; i++)
-                      DropdownMenuItem(value: i, child: Text('Page ${i + 1}')),
+                      DropdownMenuItem(value: i, child: Text(t.tp('fillSignPage', {'number': '${i + 1}'}))),
                   ],
                   onChanged: (value) {
                     if (value == null) return;
@@ -238,13 +242,13 @@ class _FillSignScreenState extends ConsumerState<FillSignScreen> {
                           child: OutlinedButton.icon(
                             onPressed: _pickSignature,
                             icon: const Icon(Icons.draw_outlined),
-                            label: Text(_signatureBytes == null ? 'Choisir une signature' : 'Changer'),
+                            label: Text(_signatureBytes == null ? t('fillSignChooseSignature') : t('fillSignChange')),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: LoadingButton(
-                            label: 'Valider',
+                            label: t('fillSignConfirm'),
                             loading: _saving,
                             onPressed: _signatureBytes == null ? null : _confirm,
                           ),

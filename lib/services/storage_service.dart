@@ -19,6 +19,7 @@ class StorageService {
   static const _kSignatures = 'signatures_index';
   static const _kGridView = 'files_grid_view';
   static const _kOnboardingSeen = 'onboarding_seen';
+  static const _kLocale = 'locale_code';
 
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
@@ -84,4 +85,11 @@ class StorageService {
 
   Future<void> setOnboardingSeen(bool value) async =>
       (await _prefs).setBool(_kOnboardingSeen, value);
+
+  /// The user's chosen UI language (ISO 639-1 code, e.g. 'en', 'fr', 'ar').
+  /// Null until they've picked one in the onboarding flow or Settings.
+  Future<String?> getLocale() async => (await _prefs).getString(_kLocale);
+
+  Future<void> setLocale(String languageCode) async =>
+      (await _prefs).setString(_kLocale, languageCode);
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../services/pdf_tools_service.dart';
@@ -112,9 +113,10 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
   }
 
   Future<void> _extractSelected() async {
+    final t = AppLocalizations.of(context)!;
     if (_selected.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sélectionne au moins une page à extraire')),
+        SnackBar(content: Text(t('organizeExtractSelectFirst'))),
       );
       return;
     }
@@ -137,7 +139,10 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
       await ref.read(filesProvider.notifier).refresh();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${refs.length} page(s) extraite(s) vers ${file.uri.pathSegments.last}')),
+        SnackBar(content: Text(t.tp('organizeExtractedCount', {
+          'count': '${refs.length}',
+          'fileName': file.uri.pathSegments.last,
+        }))),
       );
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -152,6 +157,7 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
 
   Future<void> _save() async {
     if (_pages.isEmpty) return;
+    final t = AppLocalizations.of(context)!;
     setState(() => _saving = true);
     try {
       final built = await PdfToolsService.instance.buildFromPages([
@@ -166,7 +172,7 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -176,9 +182,10 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Organiser les pages'),
+        title: Text(t('organizeTitle')),
         actions: [
           IconButton(
             icon: _saving
@@ -197,7 +204,7 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
                     width: double.infinity,
                     color: AppColors.primaryLight,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text('${_selected.length} page(s) sélectionnée(s)',
+                    child: Text(t.tp('organizeSelectedCount', {'count': '${_selected.length}'}),
                         style: const TextStyle(color: AppColors.primaryDark, fontWeight: FontWeight.w600)),
                   ),
                 Expanded(
@@ -241,8 +248,10 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
                               ),
                             ],
                           ),
-                          title: Text('Page ${index + 1}'),
-                          subtitle: entry.rotation != 0 ? Text('Pivotée ${entry.rotation}°') : null,
+                          title: Text(t.tp('organizePage', {'number': '${index + 1}'})),
+                          subtitle: entry.rotation != 0
+                              ? Text(t.tp('organizeRotatedBy', {'degrees': '${entry.rotation}'}))
+                              : null,
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -263,11 +272,11 @@ class _OrganizePagesScreenState extends ConsumerState<OrganizePagesScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _BottomAction(icon: Icons.rotate_right_rounded, label: 'Pivoter', onTap: _rotateSelected),
-                        _BottomAction(icon: Icons.delete_outline_rounded, label: 'Supprimer', onTap: _deleteSelected),
-                        _BottomAction(icon: Icons.crop_free_rounded, label: 'Extraire', onTap: _extractSelected),
-                        _BottomAction(icon: Icons.playlist_add_rounded, label: 'Insérer', onTap: _insertPdf),
-                        _BottomAction(icon: Icons.call_split_rounded, label: 'Diviser', onTap: _openSplit),
+                        _BottomAction(icon: Icons.rotate_right_rounded, label: t('organizeRotate'), onTap: _rotateSelected),
+                        _BottomAction(icon: Icons.delete_outline_rounded, label: t('organizeDelete'), onTap: _deleteSelected),
+                        _BottomAction(icon: Icons.crop_free_rounded, label: t('organizeExtract'), onTap: _extractSelected),
+                        _BottomAction(icon: Icons.playlist_add_rounded, label: t('organizeInsert'), onTap: _insertPdf),
+                        _BottomAction(icon: Icons.call_split_rounded, label: t('organizeSplit'), onTap: _openSplit),
                       ],
                     ),
                   ),

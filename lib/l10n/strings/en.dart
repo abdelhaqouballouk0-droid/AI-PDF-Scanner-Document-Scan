@@ -1,0 +1,262 @@
+/// English strings — the source/fallback language. Every key used anywhere
+/// in the app must have an entry here; other locale files only need the
+/// keys they actually translate (see AppLocalizations._t for the fallback
+/// logic).
+const Map<String, String> enStrings = {
+  // ---- Common -----------------------------------------------------------
+  'commonSave': 'Save',
+  'commonCancel': 'Cancel',
+  'commonDelete': 'Delete',
+  'commonRename': 'Rename',
+  'commonClose': 'Close',
+  'commonOpen': 'Open',
+  'commonShare': 'Share',
+  'commonToday': 'today',
+  'commonYesterday': 'yesterday',
+  'commonErrorPrefix': 'Error: {error}',
+  'docTypePdf': 'PDF',
+  'docTypeWord': 'Word',
+  'docTypeExcel': 'Excel',
+  'docTypeImage': 'Images',
+  'docTypeOther': 'Other',
+
+  // ---- Onboarding ---------------------------------------------------------
+  'onboardingChooseLanguageTitle': 'Choose your language',
+  'onboardingChooseLanguageSubtitle':
+      "Pick the language you'd like to use in the app. You can change this later from Settings.",
+  'onboardingSearchLanguageHint': 'Search for a language',
+  'onboardingFallbackNotice': 'not fully translated yet',
+  'onboardingContinue': 'Continue',
+
+  // ---- Bottom navigation --------------------------------------------------
+  'navHome': 'Home',
+  'navFiles': 'Files',
+  'navAssistant': 'Assistant',
+  'navSettings': 'Settings',
+
+  // ---- Home screen ----------------------------------------------------
+  'appName': 'AI PDF Scanner-Document Scan',
+  'homeScanDocument': 'Scan a document',
+  'homeScanSubtitle': 'Auto edge detection · Instant PDF',
+  'homeAllFiles': 'All files',
+  'homeCreatedFiles': 'Created files',
+  'homeFilesCount': '{count} Files',
+  'homeImport': 'Import',
+  'homeOpenFile': 'Open file',
+  'homeAiChat': 'AI Chat',
+  'homeMoreTools': 'More tools',
+  'homeBrowseByType': 'Browse by type',
+  'homeSeeAll': 'See all',
+  'homeRecentFiles': 'Recent files',
+  'homeNoDocumentsTitle': 'No documents yet',
+  'homeNoDocumentsMessage': 'Scan or import your first document to get started.',
+  'homeFileImported': 'File imported',
+  'homeScanUnavailable': 'Scan unavailable: {error}',
+  'homeWordFiles': 'Word Files',
+  'homePdfFiles': 'PDF Files',
+  'homeExcelFiles': 'Excel Files',
+  'homeFilesCountShort': '{count} files',
+
+  // ---- Files screen -----------------------------------------------------
+  'filesTitle': 'My files',
+  'filesPickTitle': 'Choose a file',
+  'filesSearchHint': 'Search for a file...',
+  'filesFilterAll': 'All',
+  'filesEmptyTitle': 'No files',
+  'filesEmptyMessage': 'No document matches this filter.',
+  'filesModifiedOn': 'modified {date}',
+  'filesRenameTitle': 'Rename',
+  'filesDeleteTitle': 'Delete this file?',
+  'filesMenuOpen': 'Open',
+  'filesMenuShare': 'Share',
+  'filesMenuRename': 'Rename',
+  'filesMenuDelete': 'Delete',
+
+  // ---- More tools ---------------------------------------------------------
+  'toolsTitle': 'More tools',
+  'toolsConvertToPdf': 'Convert to PDF',
+  'toolsConvertFromPdf': 'Convert from PDF',
+  'toolsOther': 'Other tools',
+  'toolsWordToPdf': 'Word to PDF',
+  'toolsExcelToPdf': 'Excel to PDF',
+  'toolsImageToPdf': 'Image to PDF',
+  'toolsPdfToWord': 'PDF to Word',
+  'toolsPdfToExcel': 'PDF to Excel',
+  'toolsPdfToJpg': 'PDF to JPG',
+  'toolsImageToText': 'Image to text',
+  'toolsMerge': 'Merge',
+  'toolsSplit': 'Split',
+  'toolsCompress': 'Compress',
+  'toolsProtect': 'Protect',
+  'toolsUnlock': 'Unlock',
+  'toolsRotate': 'Rotate',
+  'toolsDeletePages': 'Delete pages',
+  'toolsReorder': 'Reorder',
+  'toolsBackToViewer': 'Back to viewer',
+
+  // ---- Scan review --------------------------------------------------------
+  'scanReviewTitle': '{count} page(s) scanned',
+  'scanDocumentNameLabel': 'Document name',
+  'scanDefaultName': 'Scanned document',
+  'scanFormatLabel': 'Format:',
+  'scanNoPagesTitle': 'No pages',
+  'scanNoPagesMessage': 'All pages have been removed.',
+  'scanSaveAsPdf': 'Save as PDF',
+
+  // ---- Split --------------------------------------------------------------
+  'splitTitle': 'Split PDF',
+  'splitInfo':
+      '{count} file(s) will be created — tap the scissors icon under a page to mark a cut.',
+  'splitButton': 'Split into {count} file(s)',
+  'splitDone': '{count} file(s) created',
+
+  // ---- Merge --------------------------------------------------------------
+  'mergeTitle': 'Merge PDFs',
+  'mergeEmptyTitle': 'No file added',
+  'mergeEmptyMessage': 'Add at least two PDFs, in the order you want them merged.',
+  'mergeAdd': 'Add',
+  'mergeButton': 'Merge',
+
+  // ---- Compress -----------------------------------------------------------
+  'compressTitle': 'Compress PDF',
+  'compressLevelLabel': 'Compression level',
+  'compressLow': 'Low',
+  'compressLowDesc': 'Maximum quality, moderate reduction',
+  'compressMedium': 'Medium',
+  'compressMediumDesc': 'Good quality/size balance (recommended)',
+  'compressHigh': 'High',
+  'compressHighDesc': 'Smallest file, reduced quality',
+  'compressButton': 'Compress',
+  'compressResult': '{originalKb} KB → {newKb} KB',
+
+  // ---- Protect / unlock -----------------------------------------------------
+  'protectTitle': 'Protect PDF',
+  'unlockTitle': 'Unlock PDF',
+  'protectNewPasswordLabel': 'New password',
+  'unlockCurrentPasswordLabel': 'Current password',
+  'protectConfirmPasswordLabel': 'Confirm password',
+  'protectMismatch': "Passwords don't match",
+  'protectButton': 'Protect',
+  'unlockButton': 'Unlock',
+  'unlockWrongPassword': 'Incorrect password or invalid file',
+
+  // ---- Fill & sign --------------------------------------------------------
+  'fillSignTitle': 'Fill & sign',
+  'fillSignPage': 'Page {number}',
+  'fillSignChooseSignature': 'Choose a signature',
+  'fillSignChange': 'Change',
+  'fillSignConfirm': 'Confirm',
+  'fillSignDrawNew': 'Draw a new signature',
+
+  // ---- Convert --------------------------------------------------------------
+  'convertBackendRequiredTitle': 'Conversion server required',
+  'convertOpenSettings': 'Open Settings',
+  'convertChooseImages': 'Choose images',
+  'convertImagesSelected': '{count} image(s) selected',
+  'convertChooseFile': 'Choose a file',
+  'convertButton': 'Convert',
+  'convertResultTitle': 'Result',
+  'convertServerRequiredMessage':
+      'This conversion requires a server configured in Settings > Conversion '
+      '(self-hosted LibreOffice/Gotenberg or a service like CloudConvert).',
+
+  // ---- Image to text (OCR) ---------------------------------------------------
+  'ocrTitle': 'Image to text (OCR)',
+  'ocrChooseSource': 'Choose an image or a PDF',
+  'ocrNoTextDetected': 'No text detected.',
+  'ocrErrorPrefix': 'OCR error: {error}',
+  'ocrTextCopied': 'Text copied',
+  'ocrEmptyTitle': 'No text extracted',
+  'ocrEmptyMessage': 'Choose an image or a scanned PDF to run text recognition.',
+
+  // ---- Organize pages -------------------------------------------------------
+  'organizeTitle': 'Organize pages',
+  'organizeSelectedCount': '{count} page(s) selected',
+  'organizeExtractSelectFirst': 'Select at least one page to extract',
+  'organizeExtractedCount': '{count} page(s) extracted to {fileName}',
+  'organizeRotate': 'Rotate',
+  'organizeDelete': 'Delete',
+  'organizeExtract': 'Extract',
+  'organizeInsert': 'Insert',
+  'organizeSplit': 'Split',
+  'organizeRotatedBy': 'Rotated {degrees}°',
+  'organizePage': 'Page {number}',
+
+  // ---- PDF viewer -----------------------------------------------------------
+  'viewerSearchHint': 'Search in document',
+  'viewerHighlightReleaseHint': 'Release to apply the annotation',
+  'viewerHighlightSelectHint': 'Select text to annotate it',
+  'viewerAnnotationFailed': 'Annotation failed: {error}',
+  'viewerAnnotationsSaved': 'Changes saved',
+  'viewerEdit': 'Edit',
+  'viewerAnnotate': 'Annotate',
+  'viewerSign': 'Sign',
+  'viewerConvert': 'Convert',
+  'viewerAll': 'All',
+  'viewerHighlight': 'Highlight',
+  'viewerUnderline': 'Underline',
+  'viewerStrikethrough': 'Strikethrough',
+  'viewerDisableAnnotation': 'Turn off annotation',
+
+  // ---- Signatures -------------------------------------------------------
+  'signaturesTitle': 'Signatures',
+  'signaturesEmptyTitle': 'No signature saved',
+  'signaturesEmptyMessage': 'Draw a signature to sign your PDFs in one tap.',
+  'signaturesDraw': 'Draw',
+  'signaturesDefaultName': 'My signature',
+  'signaturesNewTitle': 'Signature name',
+  'signaturesRenameTitle': 'Rename signature',
+
+  // ---- Signature pad --------------------------------------------------------
+  'sigPadTitle': 'Draw a signature',
+  'sigPadClear': 'Clear',
+
+  // ---- AI assistant -----------------------------------------------------
+  'aiTitle': 'AI Assistant',
+  'aiTabSummary': 'Summary',
+  'aiTabChat': 'Chat',
+  'aiTabClassify': 'Classify',
+  'aiAnalyzing': 'Analyzing document...',
+  'aiAnalysisFailedTitle': 'Analysis failed',
+  'aiUnknownError': 'Unknown error',
+  'aiWelcomeTitle': "Hi, I'm your AI assistant",
+  'aiWelcomeMessage': 'Pick a document to summarize it, chat with it, or classify it automatically.',
+  'aiChooseDocument': 'Choose a document',
+  'aiChange': 'Change',
+  'aiNoSummaryTitle': 'No summary yet',
+  'aiNoSummaryMessage': 'Generate a concise summary of this document\'s key points.',
+  'aiGenerateSummary': 'Generate summary',
+  'aiRegenerate': 'Regenerate',
+  'aiNoQuestionTitle': 'Ask your first question',
+  'aiNoQuestionMessage': 'Ask for a summary, a specific point, or a clarification about this document.',
+  'aiAskHint': 'Ask a question about this document...',
+  'aiCategoriesLabel': 'Categories',
+  'aiClassifyButton': 'Classify with AI',
+  'aiCategoryPersonal': 'Personal writings',
+  'aiCategoryTechnical': 'Technical documentation',
+  'aiCategoryFinancial': 'Finance & invoices',
+  'aiCategoryLegal': 'Legal & contracts',
+  'aiCategoryEducation': 'Education',
+  'aiCategoryOther': 'Other',
+
+  // ---- Settings -----------------------------------------------------------
+  'settingsTitle': 'Settings',
+  'settingsAiSectionTitle': 'AI Assistant',
+  'settingsAiUrlLabel': 'Service URL (OpenAI-compatible)',
+  'settingsAiUrlDialogTitle': 'AI service URL',
+  'settingsAiModelLabel': 'Model',
+  'settingsApiKeyLabel': 'API key',
+  'settingsApiKeyEmpty': 'Not set',
+  'settingsConversionSectionTitle': 'Word / Excel conversion',
+  'settingsConversionUrlLabel': 'Conversion server URL',
+  'settingsConversionUrlNotConfigured': 'Not configured',
+  'settingsGeneralSectionTitle': 'General',
+  'settingsLanguageLabel': 'Language',
+  'settingsLibrarySectionTitle': 'Library',
+  'settingsMySignatures': 'My signatures',
+  'settingsAboutSectionTitle': 'About',
+  'settingsVersionLabel': 'Version {version}',
+
+  // ---- File open fallback ------------------------------------------------
+  'openFileFailed': "Couldn't open {fileName}: {message}",
+};

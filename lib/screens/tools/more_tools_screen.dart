@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../theme/app_theme.dart';
@@ -39,81 +40,82 @@ class MoreToolsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Plus d\'outils')),
+      appBar: AppBar(title: Text(t('toolsTitle'))),
       body: ListView(
         padding: const EdgeInsets.all(18),
         children: [
-          const Text('Convertir en PDF', style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(t('toolsConvertToPdf'), style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           _ToolsRow(children: [
             ToolTile(
               icon: Icons.description_rounded,
-              label: 'Word en PDF',
+              label: t('toolsWordToPdf'),
               color: AppColors.wordColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const ConvertScreen(kind: ConversionKind.wordToPdf))),
             ),
             ToolTile(
               icon: Icons.grid_on_rounded,
-              label: 'Excel en PDF',
+              label: t('toolsExcelToPdf'),
               color: AppColors.excelColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const ConvertScreen(kind: ConversionKind.excelToPdf))),
             ),
             ToolTile(
               icon: Icons.image_rounded,
-              label: 'Image en PDF',
+              label: t('toolsImageToPdf'),
               color: AppColors.imageColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const ConvertScreen(kind: ConversionKind.imageToPdf))),
             ),
           ]),
           const SizedBox(height: 24),
-          const Text('Convertir depuis PDF', style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(t('toolsConvertFromPdf'), style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           _ToolsRow(children: [
             ToolTile(
               icon: Icons.description_rounded,
-              label: 'PDF en Word',
+              label: t('toolsPdfToWord'),
               color: AppColors.wordColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => ConvertScreen(kind: ConversionKind.pdfToWord, initialDocument: document))),
             ),
             ToolTile(
               icon: Icons.grid_on_rounded,
-              label: 'PDF en Excel',
+              label: t('toolsPdfToExcel'),
               color: AppColors.excelColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => ConvertScreen(kind: ConversionKind.pdfToExcel, initialDocument: document))),
             ),
             ToolTile(
               icon: Icons.image_rounded,
-              label: 'PDF en JPG',
+              label: t('toolsPdfToJpg'),
               color: AppColors.imageColor,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => ConvertScreen(kind: ConversionKind.pdfToImage, initialDocument: document))),
             ),
           ]),
           const SizedBox(height: 24),
-          const Text('Autres outils', style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(t('toolsOther'), style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           _ToolsRow(children: [
             ToolTile(
               icon: Icons.text_fields_rounded,
-              label: 'Image en texte',
+              label: t('toolsImageToText'),
               onTap: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => const ImageToTextScreen())),
             ),
             ToolTile(
               icon: Icons.call_merge_rounded,
-              label: 'Fusionner',
+              label: t('toolsMerge'),
               onTap: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => const MergePdfScreen())),
             ),
             ToolTile(
               icon: Icons.call_split_rounded,
-              label: 'Diviser',
+              label: t('toolsSplit'),
               onTap: () => _open(context, (doc) => SplitPdfScreen(document: doc)),
             ),
           ]),
@@ -121,18 +123,18 @@ class MoreToolsScreen extends StatelessWidget {
           _ToolsRow(children: [
             ToolTile(
               icon: Icons.compress_rounded,
-              label: 'Compresser',
+              label: t('toolsCompress'),
               onTap: () => _open(context, (doc) => CompressPdfScreen(document: doc)),
             ),
             ToolTile(
               icon: Icons.lock_outline_rounded,
-              label: 'Protéger',
+              label: t('toolsProtect'),
               onTap: () => _open(
                   context, (doc) => ProtectUnlockScreen(document: doc, mode: ProtectMode.protect)),
             ),
             ToolTile(
               icon: Icons.lock_open_rounded,
-              label: 'Déverrouiller',
+              label: t('toolsUnlock'),
               onTap: () => _open(
                   context, (doc) => ProtectUnlockScreen(document: doc, mode: ProtectMode.unlock)),
             ),
@@ -141,17 +143,17 @@ class MoreToolsScreen extends StatelessWidget {
           _ToolsRow(children: [
             ToolTile(
               icon: Icons.rotate_right_rounded,
-              label: 'Pivoter',
+              label: t('toolsRotate'),
               onTap: () => _open(context, (doc) => OrganizePagesScreen(document: doc)),
             ),
             ToolTile(
               icon: Icons.delete_outline_rounded,
-              label: 'Suppr. pages',
+              label: t('toolsDeletePages'),
               onTap: () => _open(context, (doc) => OrganizePagesScreen(document: doc)),
             ),
             ToolTile(
               icon: Icons.reorder_rounded,
-              label: 'Réorganiser',
+              label: t('toolsReorder'),
               onTap: () => _open(context, (doc) => OrganizePagesScreen(document: doc)),
             ),
           ]),
@@ -162,7 +164,7 @@ class MoreToolsScreen extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => PdfViewerScreen(document: document!)),
               ),
               icon: const Icon(Icons.visibility_outlined),
-              label: const Text('Revenir à la visionneuse'),
+              label: Text(t('toolsBackToViewer')),
             ),
           ],
         ],

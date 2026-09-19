@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/signature_model.dart';
 import '../../providers/signature_provider.dart';
 import '../../theme/app_theme.dart';
@@ -14,17 +15,18 @@ class SignatureScreen extends ConsumerWidget {
     final bytes = await showSignaturePad(context);
     if (bytes == null || !context.mounted) return;
 
-    final controller = TextEditingController(text: 'Ma signature');
+    final t = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: t('signaturesDefaultName'));
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Nom de la signature'),
+        title: Text(t('signaturesNewTitle')),
         content: TextField(controller: controller, autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('commonCancel'))),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Enregistrer'),
+            child: Text(t('commonSave')),
           ),
         ],
       ),
@@ -34,17 +36,18 @@ class SignatureScreen extends ConsumerWidget {
   }
 
   Future<void> _rename(BuildContext context, WidgetRef ref, SignatureModel model) async {
+    final t = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: model.name);
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Renommer la signature'),
+        title: Text(t('signaturesRenameTitle')),
         content: TextField(controller: controller, autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('commonCancel'))),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Renommer'),
+            child: Text(t('commonRename')),
           ),
         ],
       ),
@@ -55,18 +58,19 @@ class SignatureScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final signatures = ref.watch(signatureProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Signatures')),
+      appBar: AppBar(title: Text(t('signaturesTitle'))),
       body: signatures.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(child: Text(t.tp('commonErrorPrefix', {'error': '$e'}))),
         data: (list) => list.isEmpty
-            ? const EmptyState(
+            ? EmptyState(
                 icon: Icons.draw_outlined,
-                title: 'Aucune signature enregistrée',
-                message: 'Dessine une signature pour pouvoir signer tes PDF en un tap.',
+                title: t('signaturesEmptyTitle'),
+                message: t('signaturesEmptyMessage'),
               )
             : ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -121,7 +125,7 @@ class SignatureScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _createNew(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Dessiner'),
+        label: Text(t('signaturesDraw')),
       ),
     );
   }

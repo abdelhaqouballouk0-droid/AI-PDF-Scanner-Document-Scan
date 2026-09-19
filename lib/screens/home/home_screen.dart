@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../providers/files_provider.dart';
@@ -26,8 +27,9 @@ class HomeScreen extends ConsumerWidget {
       );
     } catch (e) {
       if (!context.mounted) return;
+      final t = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scan indisponible : $e')),
+        SnackBar(content: Text(t.tp('homeScanUnavailable', {'error': '$e'}))),
       );
     }
   }
@@ -41,8 +43,9 @@ class HomeScreen extends ConsumerWidget {
     if (path == null) return;
     await ref.read(filesProvider.notifier).importFile(path);
     if (!context.mounted) return;
+    final t = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fichier importé')),
+      SnackBar(content: Text(t('homeFileImported'))),
     );
   }
 
@@ -59,6 +62,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final counts = ref.watch(libraryCountsProvider);
     final recentFiles = ref.watch(filesProvider).valueOrNull ?? const <DocumentFile>[];
 
@@ -69,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
             children: [
-              _Header(),
+              const _Header(),
               const SizedBox(height: 18),
               _ScanCard(
                 allCount: counts.all,
@@ -82,24 +86,24 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   ToolTile(
                     icon: Icons.file_upload_outlined,
-                    label: 'Importer',
+                    label: t('homeImport'),
                     onTap: () => _importFile(context, ref),
                   ),
                   ToolTile(
                     icon: Icons.folder_open_rounded,
-                    label: 'Ouvrir fichier',
+                    label: t('homeOpenFile'),
                     onTap: () => _openFile(context, ref),
                   ),
                   ToolTile(
                     icon: Icons.auto_awesome_rounded,
-                    label: 'AI Chat',
+                    label: t('homeAiChat'),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const AiAssistantScreen()),
                     ),
                   ),
                   ToolTile(
                     icon: Icons.apps_rounded,
-                    label: 'Plus d\'outils',
+                    label: t('homeMoreTools'),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const MoreToolsScreen()),
                     ),
@@ -108,8 +112,8 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 26),
               SectionHeader(
-                title: 'Parcourir par type',
-                actionLabel: 'Tout voir',
+                title: t('homeBrowseByType'),
+                actionLabel: t('homeSeeAll'),
                 onAction: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const FilesScreen()),
                 ),
@@ -143,18 +147,18 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 26),
               SectionHeader(
-                title: 'Fichiers récents',
-                actionLabel: 'Tout voir',
+                title: t('homeRecentFiles'),
+                actionLabel: t('homeSeeAll'),
                 onAction: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const FilesScreen()),
                 ),
               ),
               const SizedBox(height: 12),
               if (recentFiles.isEmpty)
-                const EmptyState(
+                EmptyState(
                   icon: Icons.description_outlined,
-                  title: 'Aucun document pour le moment',
-                  message: 'Scanne ou importe ton premier document pour commencer.',
+                  title: t('homeNoDocumentsTitle'),
+                  message: t('homeNoDocumentsMessage'),
                 )
               else
                 ...recentFiles.take(5).map(
@@ -180,8 +184,11 @@ class HomeScreen extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
+  const _Header();
+
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Row(
       children: [
         Container(
@@ -194,10 +201,10 @@ class _Header extends StatelessWidget {
           child: const Icon(Icons.document_scanner_rounded, color: Colors.white),
         ),
         const SizedBox(width: 10),
-        const Expanded(
+        Expanded(
           child: Text(
-            'AI PDF Scanner-Document Scan',
-            style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800),
+            t('appName'),
+            style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -234,6 +241,7 @@ class _ScanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -266,16 +274,16 @@ class _ScanCard extends StatelessWidget {
                       child: const Icon(Icons.crop_free_rounded, color: AppColors.primary),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Scanner un document',
-                              style: TextStyle(
+                          Text(t('homeScanDocument'),
+                              style: const TextStyle(
                                   color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15.5)),
-                          SizedBox(height: 2),
-                          Text('Détection de bords auto · PDF instantané',
-                              style: TextStyle(color: Colors.white70, fontSize: 12.5)),
+                          const SizedBox(height: 2),
+                          Text(t('homeScanSubtitle'),
+                              style: const TextStyle(color: Colors.white70, fontSize: 12.5)),
                         ],
                       ),
                     ),
@@ -288,9 +296,9 @@ class _ScanCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: StatChip(value: '$allCount Fichiers', label: 'Tous les fichiers')),
+              Expanded(child: StatChip(value: t.tp('homeFilesCount', {'count': '$allCount'}), label: t('homeAllFiles'))),
               Container(width: 1, height: 34, color: Colors.white24),
-              Expanded(child: StatChip(value: '$createdCount Fichiers', label: 'Fichiers créés')),
+              Expanded(child: StatChip(value: t.tp('homeFilesCount', {'count': '$createdCount'}), label: t('homeCreatedFiles'))),
             ],
           ),
         ],
@@ -308,6 +316,14 @@ class _TypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final key = switch (type) {
+      DocumentType.pdf => 'homePdfFiles',
+      DocumentType.word => 'homeWordFiles',
+      DocumentType.excel => 'homeExcelFiles',
+      DocumentType.image => 'docTypeImage',
+      DocumentType.other => 'docTypeOther',
+    };
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Material(
@@ -328,11 +344,11 @@ class _TypeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('${type.label} Files',
+                      Text(t(key),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
-                      Text('$count fichiers',
+                      Text(t.tp('homeFilesCountShort', {'count': '$count'}),
                           style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary)),
                     ],
                   ),

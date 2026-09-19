@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 /// Shows a bottom sheet with a drawing pad and returns the signature as
@@ -54,6 +55,7 @@ class _SignaturePadSheetState extends State<_SignaturePadSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
         left: 16,
@@ -67,11 +69,11 @@ class _SignaturePadSheetState extends State<_SignaturePadSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Dessiner une signature',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              Text(t('sigPadTitle'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               TextButton(
                 onPressed: () => _controller.clear(),
-                child: const Text('Effacer'),
+                child: Text(t('sigPadClear')),
               ),
             ],
           ),
@@ -93,14 +95,14 @@ class _SignaturePadSheetState extends State<_SignaturePadSheet> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Annuler'),
+                  child: Text(t('commonCancel')),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: _confirm,
-                  child: const Text('Valider'),
+                  child: Text(t('fillSignConfirm')),
                 ),
               ),
             ],

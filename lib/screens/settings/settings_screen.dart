@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
+import '../onboarding/language_selection_screen.dart';
 import '../signature/signature_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -11,23 +13,24 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Réglages')),
+      appBar: AppBar(title: Text(t('settingsTitle'))),
       body: ListView(
         padding: const EdgeInsets.all(18),
         children: [
-          const _SectionLabel('Assistant IA'),
+          _SectionLabel(t('settingsAiSectionTitle')),
           Card(
             child: Column(
               children: [
                 ListTile(
-                  title: const Text('URL du service (OpenAI-compatible)'),
+                  title: Text(t('settingsAiUrlLabel')),
                   subtitle: Text(settings.aiBaseUrl),
                   trailing: const Icon(Icons.edit_outlined),
                   onTap: () => _editField(
                     context,
-                    title: 'URL du service IA',
+                    title: t('settingsAiUrlDialogTitle'),
                     initial: settings.aiBaseUrl,
                     hint: 'https://api.openai.com/v1',
                     onSave: (v) => ref.read(settingsProvider.notifier).setAiBaseUrl(v),
@@ -35,12 +38,12 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  title: const Text('Modèle'),
+                  title: Text(t('settingsAiModelLabel')),
                   subtitle: Text(settings.aiModel),
                   trailing: const Icon(Icons.edit_outlined),
                   onTap: () => _editField(
                     context,
-                    title: 'Modèle',
+                    title: t('settingsAiModelLabel'),
                     initial: settings.aiModel,
                     hint: 'gpt-4o-mini, llama3.1, ...',
                     onSave: (v) => ref.read(settingsProvider.notifier).setAiModel(v),
@@ -48,16 +51,16 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  title: const Text('Clé API'),
+                  title: Text(t('settingsApiKeyLabel')),
                   subtitle: Text(
                     (settings.aiApiKey == null || settings.aiApiKey!.isEmpty)
-                        ? 'Non renseignée'
+                        ? t('settingsApiKeyEmpty')
                         : '•' * 12,
                   ),
                   trailing: const Icon(Icons.edit_outlined),
                   onTap: () => _editField(
                     context,
-                    title: 'Clé API',
+                    title: t('settingsApiKeyLabel'),
                     initial: settings.aiApiKey ?? '',
                     hint: 'sk-...',
                     obscure: true,
@@ -68,19 +71,19 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const _SectionLabel('Conversion Word / Excel'),
+          _SectionLabel(t('settingsConversionSectionTitle')),
           Card(
             child: ListTile(
-              title: const Text('URL du serveur de conversion'),
+              title: Text(t('settingsConversionUrlLabel')),
               subtitle: Text(
                 (settings.officeConversionUrl == null || settings.officeConversionUrl!.isEmpty)
-                    ? 'Non configuré'
+                    ? t('settingsConversionUrlNotConfigured')
                     : settings.officeConversionUrl!,
               ),
               trailing: const Icon(Icons.edit_outlined),
               onTap: () => _editField(
                 context,
-                title: 'URL du serveur de conversion',
+                title: t('settingsConversionUrlLabel'),
                 initial: settings.officeConversionUrl ?? '',
                 hint: 'https://mon-serveur-gotenberg.exemple.com',
                 onSave: (v) => ref.read(settingsProvider.notifier).setOfficeConversionUrl(v),
@@ -88,18 +91,32 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const _SectionLabel('Bibliothèque'),
+          _SectionLabel(t('settingsGeneralSectionTitle')),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+              title: Text(t('settingsLanguageLabel')),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const LanguageSelectionScreen(fromSettings: true),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _SectionLabel(t('settingsLibrarySectionTitle')),
           Card(
             child: ListTile(
               leading: const Icon(Icons.draw_outlined, color: AppColors.primary),
-              title: const Text('Mes signatures'),
+              title: Text(t('settingsMySignatures')),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => const SignatureScreen())),
             ),
           ),
           const SizedBox(height: 20),
-          const _SectionLabel('À propos'),
+          _SectionLabel(t('settingsAboutSectionTitle')),
           const Card(child: _AboutTile()),
         ],
       ),
@@ -114,6 +131,7 @@ class SettingsScreen extends ConsumerWidget {
     required ValueChanged<String> onSave,
     bool obscure = false,
   }) async {
+    final t = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: initial);
     final result = await showDialog<String>(
       context: context,
@@ -126,10 +144,10 @@ class SettingsScreen extends ConsumerWidget {
           decoration: InputDecoration(hintText: hint),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('commonCancel'))),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Enregistrer'),
+            child: Text(t('commonSave')),
           ),
         ],
       ),
@@ -159,14 +177,15 @@ class _AboutTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return FutureBuilder<PackageInfo>(
       future: PackageInfo.fromPlatform(),
       builder: (context, snapshot) {
         final version = snapshot.data?.version ?? '1.0.0';
         return ListTile(
           leading: const Icon(Icons.info_outline_rounded),
-          title: const Text('AI PDF Scanner-Document Scan'),
-          subtitle: Text('Version $version'),
+          title: Text(t('appName')),
+          subtitle: Text(t.tp('settingsVersionLabel', {'version': version})),
         );
       },
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../providers/files_provider.dart';
@@ -63,19 +64,20 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   }
 
   Future<void> _rename(DocumentFile file) async {
+    final t = AppLocalizations.of(context)!;
     final controller = TextEditingController(
       text: file.name.replaceAll(RegExp(r'\.[^.]+$'), ''),
     );
     final newName = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Renommer'),
+        title: Text(t('filesRenameTitle')),
         content: TextField(controller: controller, autofocus: true),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('commonCancel'))),
           TextButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Renommer'),
+            child: Text(t('commonRename')),
           ),
         ],
       ),
@@ -85,16 +87,17 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   }
 
   Future<void> _delete(DocumentFile file) async {
+    final t = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer ce fichier ?'),
+        title: Text(t('filesDeleteTitle')),
         content: Text(file.name),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(t('commonCancel'))),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer', style: TextStyle(color: AppColors.primary)),
+            child: Text(t('commonDelete'), style: const TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -106,22 +109,23 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final files = ref.watch(filteredFilesProvider(_selectedType));
     final visible = _query.isEmpty
         ? files
         : files.where((f) => f.name.toLowerCase().contains(_query.toLowerCase())).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.pickMode ? 'Choisir un fichier' : 'Mes fichiers')),
+      appBar: AppBar(title: Text(widget.pickMode ? t('filesPickTitle') : t('filesTitle'))),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               onChanged: (v) => setState(() => _query = v),
-              decoration: const InputDecoration(
-                hintText: 'Rechercher un fichier...',
-                prefixIcon: Icon(Icons.search_rounded),
+              decoration: InputDecoration(
+                hintText: t('filesSearchHint'),
+                prefixIcon: const Icon(Icons.search_rounded),
               ),
             ),
           ),
@@ -131,10 +135,10 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _FilterChip(label: 'Tous', selected: _selectedType == null, onTap: () => setState(() => _selectedType = null)),
+                _FilterChip(label: t('filesFilterAll'), selected: _selectedType == null, onTap: () => setState(() => _selectedType = null)),
                 for (final type in DocumentType.values)
                   _FilterChip(
-                    label: type.label,
+                    label: type.labelFor(t),
                     selected: _selectedType == type,
                     onTap: () => setState(() => _selectedType = type),
                   ),
@@ -144,10 +148,10 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
           const SizedBox(height: 8),
           Expanded(
             child: visible.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.folder_off_outlined,
-                    title: 'Aucun fichier',
-                    message: 'Aucun document ne correspond à ce filtre.',
+                    title: t('filesEmptyTitle'),
+                    message: t('filesEmptyMessage'),
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -169,16 +173,16 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
                             child: Icon(file.type.icon, color: file.type.color, size: 20),
                           ),
                           title: Text(file.name, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          subtitle: Text('${file.formattedSize} · modifié le ${_formatDate(file.modifiedAt)}'),
+                          subtitle: Text(t.tp('filesModifiedOn', {'date': _formatDate(t, file.modifiedAt)})),
                           trailing: widget.pickMode
                               ? const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted)
                               : PopupMenuButton<String>(
                                   onSelected: (action) => _handleAction(action, file),
-                                  itemBuilder: (_) => const [
-                                    PopupMenuItem(value: 'open', child: Text('Ouvrir')),
-                                    PopupMenuItem(value: 'share', child: Text('Partager')),
-                                    PopupMenuItem(value: 'rename', child: Text('Renommer')),
-                                    PopupMenuItem(value: 'delete', child: Text('Supprimer')),
+                                  itemBuilder: (_) => [
+                                    PopupMenuItem(value: 'open', child: Text(t('filesMenuOpen'))),
+                                    PopupMenuItem(value: 'share', child: Text(t('filesMenuShare'))),
+                                    PopupMenuItem(value: 'rename', child: Text(t('filesMenuRename'))),
+                                    PopupMenuItem(value: 'delete', child: Text(t('filesMenuDelete'))),
                                   ],
                                 ),
                         ),
@@ -191,11 +195,11 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(AppLocalizations t, DateTime date) {
     final now = DateTime.now();
     final diff = now.difference(date);
-    if (diff.inDays == 0) return 'aujourd\'hui';
-    if (diff.inDays == 1) return 'hier';
+    if (diff.inDays == 0) return t('commonToday');
+    if (diff.inDays == 1) return t('commonYesterday');
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

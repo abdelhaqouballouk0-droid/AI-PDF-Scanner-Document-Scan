@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/chat_message.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
@@ -38,20 +39,21 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final state = ref.watch(aiAssistantProvider);
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Assistant IA'),
+          title: Text(t('aiTitle')),
           bottom: state.document == null
               ? null
-              : const TabBar(
+              : TabBar(
                   tabs: [
-                    Tab(text: 'Résumé'),
-                    Tab(text: 'Chat'),
-                    Tab(text: 'Classer'),
+                    Tab(text: t('aiTabSummary')),
+                    Tab(text: t('aiTabChat')),
+                    Tab(text: t('aiTabClassify')),
                   ],
                 ),
         ),
@@ -61,14 +63,14 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 children: [
                   _DocumentBanner(document: state.document!, onChange: _pickDocument),
                   if (state.stage == AiStage.extracting)
-                    const Expanded(
+                    Expanded(
                       child: Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 12),
-                            Text('Analyse du document...'),
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 12),
+                            Text(t('aiAnalyzing')),
                           ],
                         ),
                       ),
@@ -77,8 +79,8 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                     Expanded(
                       child: EmptyState(
                         icon: Icons.error_outline_rounded,
-                        title: 'Analyse impossible',
-                        message: state.errorMessage ?? 'Erreur inconnue',
+                        title: t('aiAnalysisFailedTitle'),
+                        message: state.errorMessage ?? t('aiUnknownError'),
                       ),
                     )
                   else
@@ -101,14 +103,15 @@ class _DocumentPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return EmptyState(
       icon: Icons.smart_toy_outlined,
-      title: 'Salut, je suis ton assistant IA',
-      message: 'Choisis un document pour le résumer, discuter avec lui ou le classer automatiquement.',
+      title: t('aiWelcomeTitle'),
+      message: t('aiWelcomeMessage'),
       action: ElevatedButton.icon(
         onPressed: onPick,
         icon: const Icon(Icons.folder_open_rounded),
-        label: const Text('Choisir un document'),
+        label: Text(t('aiChooseDocument')),
       ),
     );
   }
@@ -122,6 +125,7 @@ class _DocumentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       color: AppColors.surface,
@@ -132,7 +136,7 @@ class _DocumentBanner extends StatelessWidget {
           Expanded(
             child: Text(document.name, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
-          TextButton(onPressed: onChange, child: const Text('Changer')),
+          TextButton(onPressed: onChange, child: Text(t('aiChange'))),
         ],
       ),
     );
@@ -144,6 +148,7 @@ class _SummaryTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final state = ref.watch(aiAssistantProvider);
     return Padding(
       padding: const EdgeInsets.all(18),
@@ -157,10 +162,10 @@ class _SummaryTab extends ConsumerWidget {
             ),
           Expanded(
             child: state.summary == null
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.summarize_outlined,
-                    title: 'Pas encore de résumé',
-                    message: 'Génère un résumé concis des points clés de ce document.',
+                    title: t('aiNoSummaryTitle'),
+                    message: t('aiNoSummaryMessage'),
                   )
                 : SingleChildScrollView(
                     child: Text(state.summary!, style: const TextStyle(height: 1.5)),
@@ -168,7 +173,7 @@ class _SummaryTab extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           LoadingButton(
-            label: state.summary == null ? 'Générer le résumé' : 'Régénérer',
+            label: state.summary == null ? t('aiGenerateSummary') : t('aiRegenerate'),
             icon: Icons.auto_awesome_rounded,
             loading: state.isSummarizing,
             onPressed: () => ref.read(aiAssistantProvider.notifier).summarize(),
@@ -204,15 +209,16 @@ class _ChatTabState extends ConsumerState<_ChatTab> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final state = ref.watch(aiAssistantProvider);
     return Column(
       children: [
         Expanded(
           child: state.chat.isEmpty
-              ? const EmptyState(
+              ? EmptyState(
                   icon: Icons.chat_bubble_outline_rounded,
-                  title: 'Pose ta première question',
-                  message: 'Demande un résumé, un point précis ou une clarification sur ce document.',
+                  title: t('aiNoQuestionTitle'),
+                  message: t('aiNoQuestionMessage'),
                 )
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -258,7 +264,7 @@ class _ChatTabState extends ConsumerState<_ChatTab> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(hintText: 'Pose une question sur ce document...'),
+                    decoration: InputDecoration(hintText: t('aiAskHint')),
                     onSubmitted: (_) => _send(state),
                   ),
                 ),
@@ -281,18 +287,20 @@ class _ClassifyTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final state = ref.watch(aiAssistantProvider);
+    final categories = AiCategory.defaultsFor(t);
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Catégories', style: TextStyle(fontWeight: FontWeight.w700)),
+          Text(t('aiCategoriesLabel'), style: const TextStyle(fontWeight: FontWeight.w700)),
           const SizedBox(height: 10),
           Expanded(
             child: ListView(
               children: [
-                for (final category in AiCategory.defaults)
+                for (final category in categories)
                   Card(
                     color: state.suggestedCategory?.id == category.id ? AppColors.primaryLight : null,
                     margin: const EdgeInsets.only(bottom: 8),
@@ -307,11 +315,10 @@ class _ClassifyTab extends ConsumerWidget {
             ),
           ),
           LoadingButton(
-            label: 'Classifier avec l\'IA',
+            label: t('aiClassifyButton'),
             icon: Icons.category_outlined,
             loading: state.isClassifying,
-            onPressed: () =>
-                ref.read(aiAssistantProvider.notifier).classify(AiCategory.defaults),
+            onPressed: () => ref.read(aiAssistantProvider.notifier).classify(categories),
           ),
         ],
       ),

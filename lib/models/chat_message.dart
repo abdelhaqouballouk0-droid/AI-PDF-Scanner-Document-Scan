@@ -1,3 +1,5 @@
+import '../l10n/app_localizations.dart';
+
 enum ChatRole { user, assistant, system }
 
 class ChatMessage {
@@ -31,12 +33,12 @@ class AiCategory {
 
   const AiCategory(this.id, this.label);
 
-  static const List<AiCategory> defaults = [
-    AiCategory('personal', 'Écrits personnels'),
-    AiCategory('technical', 'Documentation technique'),
-    AiCategory('financial', 'Finance & factures'),
-    AiCategory('legal', 'Juridique & contrats'),
-    AiCategory('education', 'Éducation'),
-    AiCategory('other', 'Autre'),
-  ];
+  static List<AiCategory> defaultsFor(AppLocalizations t) => [
+        AiCategory('personal', t('aiCategoryPersonal')),
+        AiCategory('technical', t('aiCategoryTechnical')),
+        AiCategory('financial', t('aiCategoryFinancial')),
+        AiCategory('legal', t('aiCategoryLegal')),
+        AiCategory('education', t('aiCategoryEducation')),
+        AiCategory('other', t('aiCategoryOther')),
+      ];
 }

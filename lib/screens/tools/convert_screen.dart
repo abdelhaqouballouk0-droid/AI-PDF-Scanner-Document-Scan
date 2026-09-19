@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../providers/files_provider.dart';
@@ -90,31 +91,33 @@ class _ConvertScreenState extends ConsumerState<ConvertScreen> {
           break;
       }
       await ref.read(filesProvider.notifier).refresh();
-    } on ConversionBackendNotConfigured catch (e) {
+    } on ConversionBackendNotConfigured {
       if (!mounted) return;
-      _showBackendDialog(e.message);
+      _showBackendDialog();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      final t = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _working = false);
     }
   }
 
-  void _showBackendDialog(String message) {
+  void _showBackendDialog() {
+    final t = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Serveur de conversion requis'),
-        content: Text(message),
+        title: Text(t('convertBackendRequiredTitle')),
+        content: Text(t('convertServerRequiredMessage')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fermer')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('commonClose'))),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
             },
-            child: const Text('Ouvrir Réglages'),
+            child: Text(t('convertOpenSettings')),
           ),
         ],
       ),
@@ -125,8 +128,9 @@ class _ConvertScreenState extends ConsumerState<ConvertScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(widget.kind.title)),
+      appBar: AppBar(title: Text(widget.kind.titleFor(t))),
       body: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -140,29 +144,28 @@ class _ConvertScreenState extends ConsumerState<ConvertScreen> {
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'Cette conversion nécessite un serveur configuré dans Réglages > Conversion '
-                  '(LibreOffice/Gotenberg auto-hébergé ou API type CloudConvert).',
-                  style: TextStyle(fontSize: 12.5, color: AppColors.primaryDark),
+                child: Text(
+                  t('convertServerRequiredMessage'),
+                  style: const TextStyle(fontSize: 12.5, color: AppColors.primaryDark),
                 ),
               ),
             OutlinedButton.icon(
               onPressed: _pickSource,
               icon: const Icon(Icons.attach_file_rounded),
               label: Text(_isImageToPdf
-                  ? (_images.isEmpty ? 'Choisir des images' : '${_images.length} image(s) sélectionnée(s)')
-                  : (_document?.name ?? 'Choisir un fichier')),
+                  ? (_images.isEmpty ? t('convertChooseImages') : t.tp('convertImagesSelected', {'count': '${_images.length}'}))
+                  : (_document?.name ?? t('convertChooseFile'))),
             ),
             const SizedBox(height: 20),
             LoadingButton(
-              label: 'Convertir',
+              label: t('convertButton'),
               icon: Icons.swap_horiz_rounded,
               loading: _working,
               onPressed: _canConvert ? _convert : null,
             ),
             const SizedBox(height: 20),
             if (_resultFiles.isNotEmpty) ...[
-              const Text('Résultat', style: TextStyle(fontWeight: FontWeight.w700)),
+              Text(t('convertResultTitle'), style: const TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               Expanded(
                 child: ListView.builder(

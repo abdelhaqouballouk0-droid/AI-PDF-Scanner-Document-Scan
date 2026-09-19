@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../providers/files_provider.dart';
 import '../../services/pdf_tools_service.dart';
@@ -66,6 +67,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
 
   Future<void> _split() async {
     if (_bytes == null) return;
+    final t = AppLocalizations.of(context)!;
     setState(() => _splitting = true);
     try {
       final parts = await PdfToolsService.instance.splitDocument(_bytes!, _ranges);
@@ -79,12 +81,12 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
       await ref.read(filesProvider.notifier).refresh();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${parts.length} fichier(s) créé(s)')),
+        SnackBar(content: Text(t.tp('splitDone', {'count': '${parts.length}'}))),
       );
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _splitting = false);
     }
@@ -92,8 +94,9 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Diviser le PDF')),
+      appBar: AppBar(title: Text(t('splitTitle'))),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -101,7 +104,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    '${_ranges.length} fichier(s) seront créés — touche l\'icône de découpe sous une page pour marquer une coupure.',
+                    t.tp('splitInfo', {'count': '${_ranges.length}'}),
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                   ),
                 ),
@@ -126,7 +129,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                                       : Image.memory(thumb, fit: BoxFit.cover),
                                 ),
                               ),
-                              title: Text('Page ${index + 1}'),
+                              title: Text(t.tp('organizePage', {'number': '${index + 1}'})),
                             ),
                           ),
                           if (index != _pageCount - 1)
@@ -173,7 +176,7 @@ class _SplitPdfScreenState extends ConsumerState<SplitPdfScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: LoadingButton(
-                      label: 'Diviser en ${_ranges.length} fichier(s)',
+                      label: t.tp('splitButton', {'count': '${_ranges.length}'}),
                       loading: _splitting,
                       onPressed: _pageCount < 2 ? null : _split,
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../providers/files_provider.dart';
 import '../../services/document_scanner_service.dart';
 import '../../theme/app_theme.dart';
@@ -40,14 +41,16 @@ class _MainShellState extends ConsumerState<MainShell> {
       ref.read(filesProvider.notifier).refresh();
     } catch (e) {
       if (!mounted) return;
+      final t = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Scan indisponible : $e')),
+        SnackBar(content: Text(t.tp('homeScanUnavailable', {'error': '$e'}))),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       body: IndexedStack(index: _index, children: _screens),
       bottomNavigationBar: SafeArea(
@@ -57,13 +60,13 @@ class _MainShellState extends ConsumerState<MainShell> {
             children: [
               _NavItem(
                 icon: Icons.home_rounded,
-                label: 'Accueil',
+                label: t('navHome'),
                 selected: _index == 0,
                 onTap: () => setState(() => _index = 0),
               ),
               _NavItem(
                 icon: Icons.folder_rounded,
-                label: 'Fichiers',
+                label: t('navFiles'),
                 selected: _index == 1,
                 onTap: () => setState(() => _index = 1),
               ),
@@ -89,13 +92,13 @@ class _MainShellState extends ConsumerState<MainShell> {
               ),
               _NavItem(
                 icon: Icons.auto_awesome_rounded,
-                label: 'Assistant',
+                label: t('navAssistant'),
                 selected: _index == 2,
                 onTap: () => setState(() => _index = 2),
               ),
               _NavItem(
                 icon: Icons.settings_rounded,
-                label: 'Réglages',
+                label: t('navSettings'),
                 selected: _index == 3,
                 onTap: () => setState(() => _index = 3),
               ),

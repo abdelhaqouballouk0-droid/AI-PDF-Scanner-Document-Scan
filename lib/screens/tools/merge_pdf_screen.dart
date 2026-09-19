@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../providers/files_provider.dart';
@@ -31,6 +32,7 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
 
   Future<void> _merge() async {
     if (_selected.length < 2) return;
+    final t = AppLocalizations.of(context)!;
     setState(() => _merging = true);
     try {
       final bytesList = await Future.wait(_selected.map((f) => f.file.readAsBytes()));
@@ -48,7 +50,7 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur : $e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.tp('commonErrorPrefix', {'error': '$e'}))));
     } finally {
       if (mounted) setState(() => _merging = false);
     }
@@ -56,16 +58,17 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Fusionner des PDF')),
+      appBar: AppBar(title: Text(t('mergeTitle'))),
       body: Column(
         children: [
           Expanded(
             child: _selected.isEmpty
-                ? const EmptyState(
+                ? EmptyState(
                     icon: Icons.call_merge_rounded,
-                    title: 'Aucun fichier ajouté',
-                    message: 'Ajoute au moins deux PDF, dans l\'ordre où tu veux les fusionner.',
+                    title: t('mergeEmptyTitle'),
+                    message: t('mergeEmptyMessage'),
                   )
                 : ReorderableListView.builder(
                     padding: const EdgeInsets.all(16),
@@ -107,13 +110,13 @@ class _MergePdfScreenState extends ConsumerState<MergePdfScreen> {
                     child: OutlinedButton.icon(
                       onPressed: _addFile,
                       icon: const Icon(Icons.add_rounded),
-                      label: const Text('Ajouter'),
+                      label: Text(t('mergeAdd')),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: LoadingButton(
-                      label: 'Fusionner',
+                      label: t('mergeButton'),
                       loading: _merging,
                       onPressed: _selected.length >= 2 ? _merge : null,
                     ),

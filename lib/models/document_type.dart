@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 /// The document families the app understands. Used for filtering, icons,
@@ -6,18 +7,18 @@ import '../theme/app_theme.dart';
 enum DocumentType { pdf, word, excel, image, other }
 
 extension DocumentTypeX on DocumentType {
-  String get label {
+  String labelFor(AppLocalizations t) {
     switch (this) {
       case DocumentType.pdf:
-        return 'PDF';
+        return t('docTypePdf');
       case DocumentType.word:
-        return 'Word';
+        return t('docTypeWord');
       case DocumentType.excel:
-        return 'Excel';
+        return t('docTypeExcel');
       case DocumentType.image:
-        return 'Images';
+        return t('docTypeImage');
       case DocumentType.other:
-        return 'Autres';
+        return t('docTypeOther');
     }
   }
 
