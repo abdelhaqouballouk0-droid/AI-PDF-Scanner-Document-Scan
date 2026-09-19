@@ -149,10 +149,9 @@ dépôt est connecté sur [codemagic.io](https://codemagic.io) :
 
 - **ios-workflow** : nécessite une intégration **App Store Connect** côté Codemagic
   (Teams → Integrations → App Store Connect, avec une clé API ayant accès à une app
-  enregistrée sous le bundle ID `com.example.aiPdfScanner`). Renomme l'app et le bundle ID
-  avant de publier réellement (`ios/Runner.xcodeproj`, voir aussi `PRODUCT_BUNDLE_IDENTIFIER`).
-  Sans cette intégration configurée, le build iOS échouera à l'étape de signature — c'est
-  attendu tant que tu n'as pas de compte Apple Developer branché.
+  enregistrée sous le bundle ID `com.ouballouk.aipdfscanner`). Sans cette intégration
+  configurée, le build iOS échouera à l'étape de signature — c'est attendu tant que tu
+  n'as pas de compte Apple Developer branché.
 
 Ces deux étapes (compte de service Google Play, clé API App Store Connect) nécessitent tes
 propres identifiants développeur et se configurent uniquement depuis le dashboard

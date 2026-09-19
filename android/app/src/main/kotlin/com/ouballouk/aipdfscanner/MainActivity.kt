@@ -1,4 +1,4 @@
-package com.example.ai_pdf_scanner
+package com.ouballouk.aipdfscanner
 
 import io.flutter.embedding.android.FlutterActivity
 

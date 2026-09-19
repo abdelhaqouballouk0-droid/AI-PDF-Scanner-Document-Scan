@@ -75,7 +75,7 @@ workflows:
       xcode: latest
       cocoapods: default
       vars:
-        BUNDLE_ID: "com.example.aiPdfScanner"
+        BUNDLE_ID: "com.ouballouk.aipdfscanner"
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
       # Requires an App Store Connect integration created in Codemagic
