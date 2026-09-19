@@ -74,6 +74,14 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      # Group holding CERTIFICATE_PRIVATE_KEY (a 2048-bit RSA key, secret)
+      # — create it in Codemagic (Team > your team > Environment variable
+      # groups > ios_signing). fetch-signing-files --create uses it to
+      # build the new distribution certificate's CSR; without it, it has
+      # no key to attach to the certificate it creates ("Cannot save
+      # Signing Certificates without certificate private key").
+      groups:
+        - ios_signing
       vars:
         BUNDLE_ID: "com.ouballouk.aipdfscanner"
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
