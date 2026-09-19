@@ -116,7 +116,7 @@ workflows:
           echo "$CERTIFICATE_PRIVATE_KEY_B64" | base64 --decode > "$CM_BUILD_DIR/cert_key.pem"
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
-            --certificate-key "@file:$CM_BUILD_DIR/cert_key.pem" \
+            --certificate-key "$(cat "$CM_BUILD_DIR/cert_key.pem")" \
             --create
 
       - name: Set up code signing (App Store Connect)
