@@ -78,12 +78,13 @@ workflows:
         BUNDLE_ID: "com.ouballouk.aipdfscanner"
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
-      # Requires an App Store Connect integration created in Codemagic
-      # (Teams > Integrations > App Store Connect) with an API key that has
-      # access to an app registered under BUNDLE_ID. Name the integration
-      # exactly "codemagic_api_key" below, or change the name to match.
+      # Requires an Apple Developer Portal / App Store Connect API key
+      # connected in Codemagic (Teams > Integrations > Developer Portal),
+      # with access to an app registered under BUNDLE_ID. The name below
+      # ("Codemagic") must match the key's name exactly as shown in that
+      # integration's "Manage keys" dialog.
     integrations:
-      app_store_connect: codemagic_api_key
+      app_store_connect: Codemagic
     scripts:
       - name: Get Flutter packages
         script: flutter packages pub get
