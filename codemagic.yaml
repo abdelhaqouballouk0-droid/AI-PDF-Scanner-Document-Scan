@@ -74,12 +74,16 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      # Group holding CERTIFICATE_PRIVATE_KEY (a 2048-bit RSA key, secret)
-      # — create it in Codemagic (Team > your team > Environment variable
-      # groups > ios_signing). fetch-signing-files --create uses it to
-      # build the new distribution certificate's CSR; without it, it has
-      # no key to attach to the certificate it creates ("Cannot save
+      # Group holding CERTIFICATE_PRIVATE_KEY_B64 — a 2048-bit RSA key
+      # (secret), base64-encoded to a single line so Codemagic's
+      # multiline-secret handling can't mangle it. Add it in the app's
+      # Environment variables tab, group "ios_signing". The "Fetch
+      # signing files" script decodes it back to PEM and hands it to
+      # fetch-signing-files --create as a file, which uses it to build
+      # the new distribution certificate's CSR; without it, there's no
+      # key to attach to the certificate it creates ("Cannot save
       # Signing Certificates without certificate private key").
+      # Generate one with: openssl genrsa 2048 | base64 -w0
       groups:
         - ios_signing
       vars:
@@ -109,8 +113,10 @@ workflows:
 
       - name: Fetch signing files
         script: |
+          echo "$CERTIFICATE_PRIVATE_KEY_B64" | base64 --decode > "$CM_BUILD_DIR/cert_key.pem"
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key "@file:$CM_BUILD_DIR/cert_key.pem" \
             --create
 
       - name: Set up code signing (App Store Connect)
