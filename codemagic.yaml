@@ -18,7 +18,7 @@ workflows:
         script: find . -name "Podfile" -execdir pod install \; || true
 
       - name: Flutter build iOS for Simulator
-        script: flutter build ios --simulator --release
+        script: flutter build ios --simulator --debug
 
       - name: Zip the simulator app
         script: |
