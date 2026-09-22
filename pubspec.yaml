@@ -58,6 +58,9 @@ dependencies:
   image: ^4.3.0
   package_info_plus: ^10.0.0
 
+  # Ads (AdMob)
+  google_mobile_ads: ^9.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

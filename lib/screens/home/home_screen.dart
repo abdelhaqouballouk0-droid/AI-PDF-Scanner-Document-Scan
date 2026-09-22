@@ -7,6 +7,7 @@ import '../../models/document_type.dart';
 import '../../providers/files_provider.dart';
 import '../../services/document_scanner_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/banner_ad_widget.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/open_file_helper.dart';
 import '../ai_assistant/ai_assistant_screen.dart';
@@ -179,6 +180,7 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const SafeArea(top: false, child: BannerAdWidget()),
     );
   }
 }

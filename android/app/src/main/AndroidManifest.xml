@@ -7,6 +7,12 @@
         android:label="AI PDF Scanner-Document Scan"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- AdMob App ID — TEST ID for now (safe, shows only test ads).
+             Replace with your real App ID from AdMob (Apps > your app >
+             App settings) before release: ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
