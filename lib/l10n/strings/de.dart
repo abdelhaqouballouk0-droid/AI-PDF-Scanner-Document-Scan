@@ -215,6 +215,15 @@ const Map<String, String> deStrings = {
   'aiCategoryLegal': 'Recht & Verträge',
   'aiCategoryEducation': 'Bildung',
   'aiCategoryOther': 'Sonstiges',
+  'aiConsentTitle': 'KI-Funktionen',
+  'aiConsentBody':
+      'Das Zusammenfassen, Chatten mit einem Dokument oder die automatische Einordnung sendet dessen extrahierten Text an den in den Einstellungen konfigurierten KI-Dienst (eine Drittanbieter-API, die du selbst auswählst und verbindest). Dieser Text wird nur zur Erstellung der Antwort verwendet und danach nicht gespeichert. Du kannst ablehnen und weiterhin alle anderen Funktionen der App nutzen — Scannen, PDF-Tools, OCR und Unterschrift bleiben vollständig verfügbar.',
+  'aiConsentAccept': 'Akzeptieren und KI aktivieren',
+  'aiConsentDecline': 'Nicht jetzt',
+  'aiConsentDeclinedTitle': 'KI-Funktionen sind deaktiviert',
+  'aiConsentDeclinedMessage': 'Du kannst sie jederzeit in den Einstellungen aktivieren.',
+  'aiConsentReconsider': 'KI-Funktionen aktivieren',
+  'settingsAiConsentLabel': 'KI-Funktionen aktiviert',
 
   'settingsTitle': 'Einstellungen',
   'settingsAiSectionTitle': 'KI-Assistent',

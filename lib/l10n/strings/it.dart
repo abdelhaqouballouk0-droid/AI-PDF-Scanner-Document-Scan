@@ -215,6 +215,15 @@ const Map<String, String> itStrings = {
   'aiCategoryLegal': 'Legale e contratti',
   'aiCategoryEducation': 'Istruzione',
   'aiCategoryOther': 'Altro',
+  'aiConsentTitle': 'Funzioni IA',
+  'aiConsentBody':
+      'Riassumere, chattare con un documento o classificarlo automaticamente invia il suo testo estratto al servizio IA configurato nelle Impostazioni (un\'API di terze parti che scegli e colleghi tu stesso). Questo testo viene usato solo per generare la risposta e non viene conservato in seguito. Puoi rifiutare e continuare a usare tutte le altre funzioni dell\'app — scansione, strumenti PDF, OCR e firma restano completamente disponibili.',
+  'aiConsentAccept': 'Accetta e attiva l\'IA',
+  'aiConsentDecline': 'Non ora',
+  'aiConsentDeclinedTitle': 'Funzioni IA disattivate',
+  'aiConsentDeclinedMessage': 'Puoi attivarle in qualsiasi momento dalle Impostazioni.',
+  'aiConsentReconsider': 'Attiva funzioni IA',
+  'settingsAiConsentLabel': 'Funzioni IA attivate',
 
   'settingsTitle': 'Impostazioni',
   'settingsAiSectionTitle': 'Assistente IA',

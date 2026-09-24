@@ -238,6 +238,15 @@ const Map<String, String> enStrings = {
   'aiCategoryLegal': 'Legal & contracts',
   'aiCategoryEducation': 'Education',
   'aiCategoryOther': 'Other',
+  'aiConsentTitle': 'AI features',
+  'aiConsentBody':
+      'Summarizing, chatting with, and auto-classifying a document sends its extracted text to the AI service configured in Settings (a third-party API you choose and connect yourself). That text is only used to generate the response and isn\'t stored afterwards. You can decline and still use every other feature of the app — scanning, PDF tools, OCR, and signatures all stay fully available.',
+  'aiConsentAccept': 'Accept and enable AI features',
+  'aiConsentDecline': 'Not now',
+  'aiConsentDeclinedTitle': 'AI features are off',
+  'aiConsentDeclinedMessage': 'You can turn them on anytime from Settings.',
+  'aiConsentReconsider': 'Enable AI features',
+  'settingsAiConsentLabel': 'AI features enabled',
 
   // ---- Settings -----------------------------------------------------------
   'settingsTitle': 'Settings',

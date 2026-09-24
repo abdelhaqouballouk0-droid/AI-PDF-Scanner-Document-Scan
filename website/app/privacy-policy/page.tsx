@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
       <p className="mt-2 text-muted">
         Covering all Sharkstack Developments applications, on all platforms.
       </p>
-      <p className="mt-1 text-sm text-muted">Last updated 28 July 2026</p>
+      <p className="mt-1 text-sm text-muted">Last updated 24 September 2026</p>
 
       <div className="mt-10 space-y-4 text-[15px] leading-relaxed text-foreground/90">
         <p>
@@ -79,17 +79,30 @@ export default function PrivacyPolicy() {
       <Section title="Documents and AI features">
         <p>Documents you scan or import are stored on your own device. They are not uploaded to us for storage.</p>
         <p>
-          When you ask for a summary, use chat, or a document is automatically categorised, the
-          extracted text of that document is sent to our servers and forwarded to our AI
-          provider (Google Gemini) to generate a response. That text is processed for the
-          request and is not retained by us afterwards.
+          The app&apos;s AI features (summarising a document, chatting about it, or having it
+          automatically categorised) are not powered by a service we operate. Instead, you
+          configure, in the app&apos;s Settings, the address of an AI service to use — for
+          example a provider such as OpenAI, Groq, or OpenRouter, or a model you run yourself
+          (e.g. a self-hosted or local Ollama instance). When you use one of these features, the
+          extracted text of the relevant document is sent directly from your device to that
+          AI service to generate a response. We do not operate, choose, or have access to that
+          service, and the text does not pass through or get stored on our own servers.
         </p>
         <p>
-          When you convert a file between formats, or scan a page that has no readable text
-          layer, the file is uploaded to our servers for processing and deleted once the
-          conversion completes. It is not sent to any third party.
+          Before any AI feature is used for the first time, the app shows a consent screen
+          explaining what is sent and that it goes to the third-party service you have
+          configured, with a clear option to accept or decline. If you decline, no document
+          text is ever sent to an AI service, and every other feature of the app remains fully
+          usable. You can change your choice at any time from Settings.
         </p>
-        <p>These features are only ever started by you. If you do not use them, nothing leaves your device.</p>
+        <p>
+          Converting a file between formats, or scanning a page with no readable text layer,
+          works the same way: it uses the conversion service address you configure in Settings
+          (for example a self-hosted LibreOffice/Gotenberg instance, or a service such as
+          CloudConvert). The file is uploaded directly from your device to that configured
+          service for processing and is not routed through, or retained by, our own servers.
+        </p>
+        <p>These features are only ever started by you. If you do not configure or use them, nothing leaves your device.</p>
       </Section>
 
       <Section title="Log Data">

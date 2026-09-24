@@ -24,6 +24,13 @@ class SettingsScreen extends ConsumerWidget {
           Card(
             child: Column(
               children: [
+                SwitchListTile(
+                  title: Text(t('settingsAiConsentLabel')),
+                  subtitle: Text(t('aiConsentBody')),
+                  value: settings.aiConsent ?? false,
+                  onChanged: (v) => ref.read(settingsProvider.notifier).setAiConsent(v),
+                ),
+                const Divider(height: 1),
                 ListTile(
                   title: Text(t('settingsAiUrlLabel')),
                   subtitle: Text(settings.aiBaseUrl),

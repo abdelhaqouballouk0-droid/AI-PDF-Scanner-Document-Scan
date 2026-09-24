@@ -212,6 +212,15 @@ const Map<String, String> zhStrings = {
   'aiCategoryLegal': '法律与合同',
   'aiCategoryEducation': '教育',
   'aiCategoryOther': '其他',
+  'aiConsentTitle': 'AI 功能',
+  'aiConsentBody':
+      '对文档进行摘要、聊天或自动分类会将提取的文本发送到你在设置中配置的 AI 服务(由你自己选择并连接的第三方 API)。该文本仅用于生成回复,之后不会被保留。你可以拒绝,并继续使用应用的所有其他功能——扫描、PDF 工具、OCR 和签名仍然完全可用。',
+  'aiConsentAccept': '同意并启用 AI 功能',
+  'aiConsentDecline': '暂不',
+  'aiConsentDeclinedTitle': 'AI 功能已关闭',
+  'aiConsentDeclinedMessage': '你可以随时在设置中启用它们。',
+  'aiConsentReconsider': '启用 AI 功能',
+  'settingsAiConsentLabel': 'AI 功能已启用',
 
   'settingsTitle': '设置',
   'settingsAiSectionTitle': 'AI 助手',

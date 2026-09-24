@@ -215,6 +215,15 @@ const Map<String, String> trStrings = {
   'aiCategoryLegal': 'Hukuk ve sözleşmeler',
   'aiCategoryEducation': 'Eğitim',
   'aiCategoryOther': 'Diğer',
+  'aiConsentTitle': 'AI özellikleri',
+  'aiConsentBody':
+      'Bir belgeyi özetlemek, onunla sohbet etmek veya otomatik sınıflandırmak, çıkarılan metnini Ayarlar\'da yapılandırılan AI hizmetine gönderir (kendi seçip bağladığın üçüncü taraf bir API). Bu metin yalnızca yanıt oluşturmak için kullanılır ve sonrasında saklanmaz. Reddedebilir ve uygulamanın diğer tüm özelliklerini kullanmaya devam edebilirsin — tarama, PDF araçları, OCR ve imza tamamen kullanılabilir kalır.',
+  'aiConsentAccept': 'Kabul et ve AI\'yı etkinleştir',
+  'aiConsentDecline': 'Şimdi değil',
+  'aiConsentDeclinedTitle': 'AI özellikleri kapalı',
+  'aiConsentDeclinedMessage': 'İstediğin zaman Ayarlar\'dan etkinleştirebilirsin.',
+  'aiConsentReconsider': 'AI özelliklerini etkinleştir',
+  'settingsAiConsentLabel': 'AI özellikleri etkin',
 
   'settingsTitle': 'Ayarlar',
   'settingsAiSectionTitle': 'AI Asistan',

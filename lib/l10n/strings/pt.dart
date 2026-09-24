@@ -215,6 +215,15 @@ const Map<String, String> ptStrings = {
   'aiCategoryLegal': 'Jurídico e contratos',
   'aiCategoryEducation': 'Educação',
   'aiCategoryOther': 'Outro',
+  'aiConsentTitle': 'Recursos de IA',
+  'aiConsentBody':
+      'Resumir, conversar com um documento ou classificá-lo automaticamente envia o texto extraído para o serviço de IA configurado em Configurações (uma API de terceiros que você escolhe e conecta). Esse texto só é usado para gerar a resposta e não é armazenado depois. Você pode recusar e continuar usando todos os outros recursos do app — digitalização, ferramentas de PDF, OCR e assinatura continuam totalmente disponíveis.',
+  'aiConsentAccept': 'Aceitar e ativar a IA',
+  'aiConsentDecline': 'Agora não',
+  'aiConsentDeclinedTitle': 'Recursos de IA desativados',
+  'aiConsentDeclinedMessage': 'Você pode ativá-los a qualquer momento em Configurações.',
+  'aiConsentReconsider': 'Ativar recursos de IA',
+  'settingsAiConsentLabel': 'Recursos de IA ativados',
 
   'settingsTitle': 'Configurações',
   'settingsAiSectionTitle': 'Assistente de IA',

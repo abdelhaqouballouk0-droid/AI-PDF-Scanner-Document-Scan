@@ -213,6 +213,15 @@ const Map<String, String> hiStrings = {
   'aiCategoryLegal': 'कानूनी और अनुबंध',
   'aiCategoryEducation': 'शिक्षा',
   'aiCategoryOther': 'अन्य',
+  'aiConsentTitle': 'AI सुविधाएं',
+  'aiConsentBody':
+      'दस्तावेज़ का सारांश बनाना, उससे चैट करना या उसे स्वतः वर्गीकृत करना, उसका निकाला गया टेक्स्ट सेटिंग्स में कॉन्फ़िगर की गई AI सेवा (एक तृतीय-पक्ष API जिसे आप स्वयं चुनते और जोड़ते हैं) को भेजता है। यह टेक्स्ट केवल जवाब बनाने के लिए इस्तेमाल होता है और बाद में सहेजा नहीं जाता। आप मना कर सकते हैं और ऐप की बाकी सभी सुविधाओं का उपयोग जारी रख सकते हैं — स्कैनिंग, PDF टूल्स, OCR और हस्ताक्षर पूरी तरह उपलब्ध रहते हैं।',
+  'aiConsentAccept': 'स्वीकार करें और AI सक्षम करें',
+  'aiConsentDecline': 'अभी नहीं',
+  'aiConsentDeclinedTitle': 'AI सुविधाएं बंद हैं',
+  'aiConsentDeclinedMessage': 'आप इन्हें कभी भी सेटिंग्स से सक्षम कर सकते हैं।',
+  'aiConsentReconsider': 'AI सुविधाएं सक्षम करें',
+  'settingsAiConsentLabel': 'AI सुविधाएं सक्षम हैं',
 
   'settingsTitle': 'सेटिंग्स',
   'settingsAiSectionTitle': 'AI सहायक',

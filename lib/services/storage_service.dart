@@ -20,6 +20,7 @@ class StorageService {
   static const _kGridView = 'files_grid_view';
   static const _kOnboardingSeen = 'onboarding_seen';
   static const _kLocale = 'locale_code';
+  static const _kAiConsent = 'ai_consent_given';
 
   Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
@@ -92,4 +93,13 @@ class StorageService {
 
   Future<void> setLocale(String languageCode) async =>
       (await _prefs).setString(_kLocale, languageCode);
+
+  /// Whether the user has responded to the AI-features consent prompt.
+  /// Null = not asked yet, true = accepted, false = declined. Required
+  /// before any document text is sent to the (user-configured) AI
+  /// backend — see AiAssistantScreen.
+  Future<bool?> getAiConsent() async => (await _prefs).getBool(_kAiConsent);
+
+  Future<void> setAiConsent(bool value) async =>
+      (await _prefs).setBool(_kAiConsent, value);
 }

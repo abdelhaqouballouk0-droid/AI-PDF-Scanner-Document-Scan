@@ -5,6 +5,7 @@ import '../../models/chat_message.dart';
 import '../../models/document_file.dart';
 import '../../models/document_type.dart';
 import '../../providers/ai_provider.dart';
+import '../../services/storage_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
 import '../files/files_screen.dart';
@@ -19,14 +20,42 @@ class AiAssistantScreen extends ConsumerStatefulWidget {
 }
 
 class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
+  bool _loadingConsent = true;
+  bool? _consent;
+
   @override
   void initState() {
     super.initState();
-    if (widget.initialDocument != null) {
+    _loadConsent();
+  }
+
+  Future<void> _loadConsent() async {
+    final consent = await StorageService.instance.getAiConsent();
+    if (!mounted) return;
+    setState(() {
+      _consent = consent;
+      _loadingConsent = false;
+    });
+    if (consent == true && widget.initialDocument != null) {
       Future.microtask(
         () => ref.read(aiAssistantProvider.notifier).selectDocument(widget.initialDocument!),
       );
     }
+  }
+
+  Future<void> _acceptConsent() async {
+    await StorageService.instance.setAiConsent(true);
+    if (!mounted) return;
+    setState(() => _consent = true);
+    if (widget.initialDocument != null) {
+      ref.read(aiAssistantProvider.notifier).selectDocument(widget.initialDocument!);
+    }
+  }
+
+  Future<void> _declineConsent() async {
+    await StorageService.instance.setAiConsent(false);
+    if (!mounted) return;
+    setState(() => _consent = false);
   }
 
   Future<void> _pickDocument() async {
@@ -40,6 +69,23 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+
+    if (_loadingConsent) {
+      return Scaffold(
+        appBar: AppBar(title: Text(t('aiTitle'))),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_consent != true) {
+      return Scaffold(
+        appBar: AppBar(title: Text(t('aiTitle'))),
+        body: _consent == false
+            ? _AiConsentDeclined(onReconsider: _acceptConsent)
+            : _AiConsentPrompt(onAccept: _acceptConsent, onDecline: _declineConsent),
+      );
+    }
+
     final state = ref.watch(aiAssistantProvider);
 
     return DefaultTabController(
@@ -92,6 +138,65 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 ],
               ),
       ),
+    );
+  }
+}
+
+class _AiConsentPrompt extends StatelessWidget {
+  final VoidCallback onAccept;
+  final VoidCallback onDecline;
+
+  const _AiConsentPrompt({required this.onAccept, required this.onDecline});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            const SizedBox(height: 24),
+            const Icon(Icons.smart_toy_outlined, size: 56, color: AppColors.primary),
+            const SizedBox(height: 20),
+            Text(
+              t('aiConsentTitle'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              t('aiConsentBody'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(height: 1.5, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(onPressed: onAccept, child: Text(t('aiConsentAccept'))),
+            ),
+            const SizedBox(height: 8),
+            TextButton(onPressed: onDecline, child: Text(t('aiConsentDecline'))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AiConsentDeclined extends StatelessWidget {
+  final VoidCallback onReconsider;
+
+  const _AiConsentDeclined({required this.onReconsider});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return EmptyState(
+      icon: Icons.smart_toy_outlined,
+      title: t('aiConsentDeclinedTitle'),
+      message: t('aiConsentDeclinedMessage'),
+      action: OutlinedButton(onPressed: onReconsider, child: Text(t('aiConsentReconsider'))),
     );
   }
 }

@@ -215,6 +215,15 @@ const Map<String, String> frStrings = {
   'aiCategoryLegal': 'Juridique & contrats',
   'aiCategoryEducation': 'Éducation',
   'aiCategoryOther': 'Autre',
+  'aiConsentTitle': 'Fonctionnalités IA',
+  'aiConsentBody':
+      'Résumer, discuter avec un document ou le classer automatiquement envoie son texte extrait au service IA configuré dans les Réglages (une API tierce que tu choisis et connectes toi-même). Ce texte n\'est utilisé que pour générer la réponse et n\'est pas conservé ensuite. Tu peux refuser et continuer à utiliser toutes les autres fonctionnalités de l\'app — scan, outils PDF, OCR et signature restent entièrement disponibles.',
+  'aiConsentAccept': 'Accepter et activer l\'IA',
+  'aiConsentDecline': 'Pas maintenant',
+  'aiConsentDeclinedTitle': 'Fonctionnalités IA désactivées',
+  'aiConsentDeclinedMessage': 'Tu peux les activer à tout moment depuis les Réglages.',
+  'aiConsentReconsider': 'Activer les fonctionnalités IA',
+  'settingsAiConsentLabel': 'Fonctionnalités IA activées',
 
   'settingsTitle': 'Réglages',
   'settingsAiSectionTitle': 'Assistant IA',

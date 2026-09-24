@@ -215,6 +215,15 @@ const Map<String, String> esStrings = {
   'aiCategoryLegal': 'Legal y contratos',
   'aiCategoryEducation': 'Educación',
   'aiCategoryOther': 'Otro',
+  'aiConsentTitle': 'Funciones de IA',
+  'aiConsentBody':
+      'Resumir, chatear con un documento o clasificarlo automáticamente envía su texto extraído al servicio de IA configurado en Ajustes (una API de terceros que tú eliges y conectas). Ese texto solo se usa para generar la respuesta y no se conserva después. Puedes rechazarlo y seguir usando el resto de la app — escaneo, herramientas PDF, OCR y firma siguen totalmente disponibles.',
+  'aiConsentAccept': 'Aceptar y activar la IA',
+  'aiConsentDecline': 'Ahora no',
+  'aiConsentDeclinedTitle': 'Funciones de IA desactivadas',
+  'aiConsentDeclinedMessage': 'Puedes activarlas cuando quieras desde Ajustes.',
+  'aiConsentReconsider': 'Activar funciones de IA',
+  'settingsAiConsentLabel': 'Funciones de IA activadas',
 
   'settingsTitle': 'Ajustes',
   'settingsAiSectionTitle': 'Asistente IA',
