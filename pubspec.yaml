@@ -42,6 +42,7 @@ dependencies:
   file_picker: ^13.1.0
   open_filex: ^4.5.0
   share_plus: ^13.0.0
+  url_launcher: ^6.3.1
 
   # Permissions (camera, photos, storage)
   permission_handler: ^12.0.1

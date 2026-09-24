@@ -51,6 +51,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/privacy-policy" className="hover:text-primary">
                 Privacy Policy
               </Link>
+              <Link href="/terms-of-service" className="hover:text-primary">
+                Terms of Service
+              </Link>
             </nav>
           </div>
         </header>
@@ -63,6 +66,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex gap-4">
               <Link href="/privacy-policy" className="hover:text-primary">
                 Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="hover:text-primary">
+                Terms of Service
               </Link>
               <a href="mailto:Studentabdelhak@gmail.com" className="hover:text-primary">
                 Contact

@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
 import '../../theme/app_theme.dart';
+import '../favorites/favorites_screen.dart';
 import '../onboarding/language_selection_screen.dart';
 import '../signature/signature_screen.dart';
+
+const _kPlayStoreUrl = 'https://play.google.com/store/apps/details?id=com.ouballouk.aipdfscanner';
+const _kPrivacyPolicyUrl = 'https://website-ivory-six-ny2q7yow1q.vercel.app/privacy-policy';
+const _kTermsOfServiceUrl = 'https://website-ivory-six-ny2q7yow1q.vercel.app/terms-of-service';
+const _kSupportEmail = 'Studentabdelhak@gmail.com';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -20,6 +29,8 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(18),
         children: [
+          _ProBanner(onTap: () => _showComingSoon(context)),
+          const SizedBox(height: 20),
           _SectionLabel(t('settingsAiSectionTitle')),
           Card(
             child: Column(
@@ -98,17 +109,39 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
-          _SectionLabel(t('settingsGeneralSectionTitle')),
+          _SectionLabel(t('settingsActivitySectionTitle')),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.language_rounded, color: AppColors.primary),
-              title: Text(t('settingsLanguageLabel')),
+              leading: const Icon(Icons.star_outline_rounded, color: AppColors.primary),
+              title: Text(t('settingsFavorites')),
               trailing: const Icon(Icons.chevron_right_rounded),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const LanguageSelectionScreen(fromSettings: true),
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const FavoritesScreen())),
+            ),
+          ),
+          const SizedBox(height: 20),
+          _SectionLabel(t('settingsGeneralSectionTitle')),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+                  title: Text(t('settingsLanguageLabel')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const LanguageSelectionScreen(fromSettings: true),
+                    ),
+                  ),
                 ),
-              ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.notifications_none_rounded, color: AppColors.primary),
+                  title: Text(t('settingsNotifications')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: openAppSettings,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -123,11 +156,70 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 20),
+          _SectionLabel(t('settingsSupportSectionTitle')),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.star_rate_rounded, color: AppColors.primary),
+                  title: Text(t('settingsRateApp')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => launchUrl(Uri.parse(_kPlayStoreUrl), mode: LaunchMode.externalApplication),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.share_outlined, color: AppColors.primary),
+                  title: Text(t('settingsShareApp')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => SharePlus.instance.share(
+                    ShareParams(text: '${t('shareAppMessage')} $_kPlayStoreUrl'),
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.support_agent_rounded, color: AppColors.primary),
+                  title: Text(t('settingsContactSupport')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => launchUrl(Uri(
+                    scheme: 'mailto',
+                    path: _kSupportEmail,
+                    query: 'subject=${Uri.encodeComponent(t('appName'))}',
+                  )),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
           _SectionLabel(t('settingsAboutSectionTitle')),
-          const Card(child: _AboutTile()),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+                  title: Text(t('settingsTermsOfService')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => launchUrl(Uri.parse(_kTermsOfServiceUrl), mode: LaunchMode.externalApplication),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined, color: AppColors.primary),
+                  title: Text(t('settingsPrivacyPolicy')),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => launchUrl(Uri.parse(_kPrivacyPolicyUrl), mode: LaunchMode.externalApplication),
+                ),
+                const Divider(height: 1),
+                const _AboutTile(),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _showComingSoon(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('comingSoonMessage'))));
   }
 
   Future<void> _editField(
@@ -160,6 +252,58 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (result != null) onSave(result);
+  }
+}
+
+class _ProBanner extends StatelessWidget {
+  final VoidCallback onTap;
+  const _ProBanner({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: AppColors.proGradient),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(Icons.diamond_outlined, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    t('proBannerTitle'),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    t('proBannerSubtitle'),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white),
+          ],
+        ),
+      ),
+    );
   }
 }
 
